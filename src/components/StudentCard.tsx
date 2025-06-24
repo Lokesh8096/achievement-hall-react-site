@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import { ExternalLink } from "lucide-react";
 
 interface Student {
-  id: number;
+  id: string;
   name: string;
   image_url: string;
   score: number;

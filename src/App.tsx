@@ -12,6 +12,7 @@ import Profile from "./pages/Profile";
 import Testimonials from "./pages/Testimonials";
 import AboutUs from "./pages/AboutUs";
 import AdminDashboard from "./pages/AdminDashboard";
+import Auth from "./pages/Auth";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -25,6 +26,7 @@ const App = () => (
         <BrowserRouter>
           <Routes>
             <Route path="/" element={<Index />} />
+            <Route path="/auth" element={<Auth />} />
             <Route path="/leaderboard" element={<Leaderboard />} />
             <Route path="/student/:id" element={<StudentDetail />} />
             <Route path="/profile" element={<Profile />} />
