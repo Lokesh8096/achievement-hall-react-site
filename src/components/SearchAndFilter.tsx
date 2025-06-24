@@ -1,6 +1,6 @@
 
 import React, { useState } from 'react';
-import { Search, Filter, X } from 'lucide-react';
+import { Search, Filter, X, Sliders } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import {
@@ -50,13 +50,13 @@ const SearchAndFilter: React.FC<SearchAndFilterProps> = ({
       <div className="flex flex-col lg:flex-row gap-4 items-center">
         {/* Search Bar */}
         <div className="relative flex-1 max-w-md">
-          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-slate-400" />
           <Input
             type="text"
             placeholder="Search students by name..."
             value={searchQuery}
             onChange={(e) => onSearch(e.target.value)}
-            className="pl-10"
+            className="pl-10 bg-slate-800 border-slate-600 text-white placeholder-slate-400 focus:border-orange-500 focus:ring-orange-500"
           />
         </div>
 
@@ -64,12 +64,12 @@ const SearchAndFilter: React.FC<SearchAndFilterProps> = ({
         <Button
           variant="outline"
           onClick={() => setShowFilters(!showFilters)}
-          className="flex items-center gap-2"
+          className="cricket-button-secondary flex items-center gap-2"
         >
-          <Filter className="h-4 w-4" />
+          <Sliders className="h-4 w-4" />
           Filters
           {hasActiveFilters && (
-            <span className="bg-blue-600 text-white text-xs rounded-full px-2 py-1">
+            <span className="bg-orange-500 text-white text-xs rounded-full px-2 py-1 ml-1">
               Active
             </span>
           )}
@@ -77,7 +77,11 @@ const SearchAndFilter: React.FC<SearchAndFilterProps> = ({
 
         {/* Clear Filters */}
         {hasActiveFilters && (
-          <Button variant="ghost" onClick={onClearFilters} className="flex items-center gap-2">
+          <Button 
+            variant="ghost" 
+            onClick={onClearFilters} 
+            className="flex items-center gap-2 text-slate-400 hover:text-white hover:bg-slate-700"
+          >
             <X className="h-4 w-4" />
             Clear All
           </Button>
@@ -86,22 +90,22 @@ const SearchAndFilter: React.FC<SearchAndFilterProps> = ({
 
       {/* Filter Panel */}
       {showFilters && (
-        <Card className="mt-4">
+        <Card className="mt-4 cricket-card border-slate-600">
           <CardContent className="p-6">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               {/* Team Filter */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-slate-300 mb-2">
                   Filter by Team
                 </label>
                 <Select value={selectedTeam} onValueChange={onFilterByTeam}>
-                  <SelectTrigger>
+                  <SelectTrigger className="bg-slate-800 border-slate-600 text-white">
                     <SelectValue placeholder="Select a team..." />
                   </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="">All Teams</SelectItem>
+                  <SelectContent className="bg-slate-800 border-slate-600">
+                    <SelectItem value="" className="text-white hover:bg-slate-700">All Teams</SelectItem>
                     {teams.map((team) => (
-                      <SelectItem key={team} value={team}>
+                      <SelectItem key={team} value={team} className="text-white hover:bg-slate-700">
                         {team}
                       </SelectItem>
                     ))}
@@ -111,8 +115,8 @@ const SearchAndFilter: React.FC<SearchAndFilterProps> = ({
 
               {/* Score Range Filter */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Score Range: {localScoreRange[0]} - {localScoreRange[1]}
+                <label className="block text-sm font-medium text-slate-300 mb-2">
+                  Score Range: <span className="text-orange-500 font-semibold">{localScoreRange[0]} - {localScoreRange[1]}</span>
                 </label>
                 <div className="px-3">
                   <Slider
@@ -121,10 +125,10 @@ const SearchAndFilter: React.FC<SearchAndFilterProps> = ({
                     max={100}
                     min={0}
                     step={1}
-                    className="w-full"
+                    className="w-full [&>span:first-child]:bg-slate-600 [&>span:first-child>span]:bg-orange-500 [&>span:last-child>span]:bg-orange-500 [&>span:last-child>span]:border-orange-500"
                   />
                 </div>
-                <div className="flex justify-between text-xs text-gray-500 mt-1">
+                <div className="flex justify-between text-xs text-slate-400 mt-1">
                   <span>0</span>
                   <span>100</span>
                 </div>
