@@ -1,13 +1,81 @@
 
 import { useParams, useNavigate } from "react-router-dom";
-import { getStudentById } from "@/data/sampleData";
+import { useEffect, useState } from "react";
+import { supabase } from "@/integrations/supabase/client";
 import Navbar from "@/components/Navbar";
 import { ArrowLeft, ExternalLink, Trophy, Users } from "lucide-react";
+import { Skeleton } from "@/components/ui/skeleton";
+
+interface Student {
+  id: string;
+  name: string;
+  image_url: string;
+  score: number;
+  team_name: string;
+  project_link: string;
+}
 
 const StudentDetail = () => {
   const { id } = useParams();
   const navigate = useNavigate();
-  const student = getStudentById(Number(id));
+  const [student, setStudent] = useState<Student | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchStudent = async () => {
+      if (!id) return;
+      
+      try {
+        const { data, error } = await supabase
+          .from('students')
+          .select('*')
+          .eq('id', id)
+          .single();
+
+        if (error) throw error;
+        setStudent(data);
+      } catch (error) {
+        console.error('Error fetching student:', error);
+        setStudent(null);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchStudent();
+  }, [id]);
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gray-50">
+        <Navbar />
+        <div className="container mx-auto px-4 py-12">
+          <Skeleton className="h-6 w-24 mb-8" />
+          <div className="bg-white rounded-xl shadow-lg overflow-hidden">
+            <div className="md:flex">
+              <div className="md:w-1/3">
+                <Skeleton className="w-full h-64 md:h-full" />
+              </div>
+              <div className="md:w-2/3 p-8">
+                <div className="flex justify-between items-start mb-6">
+                  <div>
+                    <Skeleton className="h-8 w-48 mb-2" />
+                    <div className="flex items-center space-x-4">
+                      <Skeleton className="h-5 w-32" />
+                      <Skeleton className="h-5 w-24" />
+                    </div>
+                  </div>
+                  <Skeleton className="h-16 w-16 rounded-full" />
+                </div>
+                <Skeleton className="h-32 w-full mb-8" />
+                <Skeleton className="h-12 w-40" />
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   if (!student) {
     return (

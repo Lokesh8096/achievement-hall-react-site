@@ -2,9 +2,12 @@
 import Navbar from "@/components/Navbar";
 import ImageCarousel from "@/components/ImageCarousel";
 import StudentCard from "@/components/StudentCard";
-import { sampleStudents } from "@/data/sampleData";
+import { useStudents } from "@/hooks/useStudents";
+import { Skeleton } from "@/components/ui/skeleton";
 
 const Index = () => {
+  const { students, loading } = useStudents();
+
   return (
     <div className="min-h-screen bg-gray-50">
       <Navbar />
@@ -25,36 +28,55 @@ const Index = () => {
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {sampleStudents.map((student) => (
-            <StudentCard key={student.id} student={student} />
-          ))}
-        </div>
+        {loading ? (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {[...Array(6)].map((_, i) => (
+              <div key={i} className="bg-white rounded-xl shadow-md overflow-hidden">
+                <Skeleton className="h-48 w-full" />
+                <div className="p-6">
+                  <Skeleton className="h-6 w-3/4 mb-2" />
+                  <div className="flex items-center justify-between">
+                    <Skeleton className="h-4 w-1/2" />
+                    <Skeleton className="h-4 w-4" />
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {students.map((student) => (
+              <StudentCard key={student.id} student={student} />
+            ))}
+          </div>
+        )}
       </section>
 
       {/* Statistics Section */}
-      <section className="bg-blue-600 text-white py-16">
-        <div className="container mx-auto px-4">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 text-center">
-            <div>
-              <div className="text-4xl font-bold mb-2">{sampleStudents.length}</div>
-              <div className="text-blue-200">Total Students</div>
-            </div>
-            <div>
-              <div className="text-4xl font-bold mb-2">
-                {new Set(sampleStudents.map(s => s.team_name)).size}
+      {!loading && (
+        <section className="bg-blue-600 text-white py-16">
+          <div className="container mx-auto px-4">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8 text-center">
+              <div>
+                <div className="text-4xl font-bold mb-2">{students.length}</div>
+                <div className="text-blue-200">Total Students</div>
               </div>
-              <div className="text-blue-200">Active Teams</div>
-            </div>
-            <div>
-              <div className="text-4xl font-bold mb-2">
-                {Math.round(sampleStudents.reduce((sum, s) => sum + s.score, 0) / sampleStudents.length)}
+              <div>
+                <div className="text-4xl font-bold mb-2">
+                  {new Set(students.map(s => s.team_name)).size}
+                </div>
+                <div className="text-blue-200">Active Teams</div>
               </div>
-              <div className="text-blue-200">Average Score</div>
+              <div>
+                <div className="text-4xl font-bold mb-2">
+                  {students.length > 0 ? Math.round(students.reduce((sum, s) => sum + s.score, 0) / students.length) : 0}
+                </div>
+                <div className="text-blue-200">Average Score</div>
+              </div>
             </div>
           </div>
-        </div>
-      </section>
+        </section>
+      )}
     </div>
   );
 };
