@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Menu, X, User, LogOut, Shield } from "lucide-react";
@@ -28,14 +27,18 @@ const Navbar = () => {
     { name: "Testimonials", path: "/testimonials" },
     { name: "About Us", path: "/about" },
   ];
+  
+  // URL for the logo
+  const logoUrl = "https://media.licdn.com/dms/image/v2/D4D0BAQECIHpRqJIBDg/company-logo_200_200/company-logo_200_200/0/1713886646182?e=2147483647&v=beta&t=Qya9if2QIEz6LjOohZfBxX-gZb769ugLKh-cdTz845M";
 
   return (
-    <nav className="bg-white shadow-lg sticky top-0 z-50">
+    <nav className="bg-gray-900 shadow-lg sticky top-0 z-50">
       <div className="container mx-auto px-4">
         <div className="flex justify-between items-center h-16">
           {/* Logo */}
-          <Link to="/" className="flex items-center space-x-2">
-            <div className="text-2xl font-bold text-blue-600">Hall of Fame</div>
+          <Link to="/" className="flex items-center space-x-3">
+            <img src={logoUrl} alt="Logo" className="h-8 w-auto" />
+            <div className="text-2xl font-bold text-white">Hall of Fame</div>
           </Link>
 
           {/* Desktop Navigation */}
@@ -44,7 +47,7 @@ const Navbar = () => {
               <Link
                 key={item.name}
                 to={item.path}
-                className="text-gray-700 hover:text-blue-600 transition-colors duration-200 font-medium"
+                className="text-gray-300 hover:text-white transition-colors duration-200 font-medium"
               >
                 {item.name}
               </Link>
@@ -54,36 +57,36 @@ const Navbar = () => {
             {user ? (
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <Button variant="ghost" className="relative h-8 w-8 rounded-full">
+                  <Button variant="ghost" className="relative h-8 w-8 rounded-full bg-gray-700 text-white hover:bg-gray-600">
                     <User className="h-4 w-4" />
                   </Button>
                 </DropdownMenuTrigger>
-                <DropdownMenuContent className="w-56" align="end" forceMount>
+                <DropdownMenuContent className="w-56 bg-gray-800 border-gray-700 text-white" align="end" forceMount>
                   <div className="flex items-center justify-start gap-2 p-2">
                     <div className="flex flex-col space-y-1 leading-none">
                       <p className="font-medium">{user.email}</p>
                       {isAdmin && (
-                        <p className="text-xs text-muted-foreground">Administrator</p>
+                        <p className="text-xs text-blue-400">Administrator</p>
                       )}
                     </div>
                   </div>
-                  <DropdownMenuSeparator />
-                  <DropdownMenuItem asChild>
+                  <DropdownMenuSeparator className="bg-gray-700" />
+                  <DropdownMenuItem asChild className="cursor-pointer focus:bg-gray-700">
                     <Link to="/profile">
                       <User className="mr-2 h-4 w-4" />
                       Profile
                     </Link>
                   </DropdownMenuItem>
                   {isAdmin && (
-                    <DropdownMenuItem asChild>
+                    <DropdownMenuItem asChild className="cursor-pointer focus:bg-gray-700">
                       <Link to="/admin">
                         <Shield className="mr-2 h-4 w-4" />
                         Admin Dashboard
                       </Link>
                     </DropdownMenuItem>
                   )}
-                  <DropdownMenuSeparator />
-                  <DropdownMenuItem onClick={handleSignOut}>
+                  <DropdownMenuSeparator className="bg-gray-700" />
+                  <DropdownMenuItem onClick={handleSignOut} className="cursor-pointer focus:bg-gray-700">
                     <LogOut className="mr-2 h-4 w-4" />
                     Sign Out
                   </DropdownMenuItem>
@@ -91,7 +94,7 @@ const Navbar = () => {
               </DropdownMenu>
             ) : (
               <Link to="/auth">
-                <Button>Sign In</Button>
+                <Button variant="outline" className="text-white border-white hover:bg-white hover:text-gray-900">Sign In</Button>
               </Link>
             )}
           </div>
@@ -100,7 +103,7 @@ const Navbar = () => {
           <div className="md:hidden">
             <button
               onClick={() => setIsOpen(!isOpen)}
-              className="text-gray-700 hover:text-blue-600 focus:outline-none"
+              className="text-gray-300 hover:text-white focus:outline-none"
             >
               {isOpen ? <X size={24} /> : <Menu size={24} />}
             </button>
@@ -110,12 +113,12 @@ const Navbar = () => {
         {/* Mobile Navigation */}
         {isOpen && (
           <div className="md:hidden">
-            <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3 bg-white border-t">
+            <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3 bg-gray-900 border-t border-gray-700">
               {navItems.map((item) => (
                 <Link
                   key={item.name}
                   to={item.path}
-                  className="block px-3 py-2 text-gray-700 hover:text-blue-600 transition-colors duration-200"
+                  className="block px-3 py-2 text-gray-300 hover:bg-gray-700 hover:text-white rounded-md"
                   onClick={() => setIsOpen(false)}
                 >
                   {item.name}
@@ -123,10 +126,10 @@ const Navbar = () => {
               ))}
               
               {user ? (
-                <>
+                <div className="pt-4 mt-4 border-t border-gray-700">
                   <Link
                     to="/profile"
-                    className="block px-3 py-2 text-gray-700 hover:text-blue-600 transition-colors duration-200"
+                    className="block px-3 py-2 text-gray-300 hover:bg-gray-700 hover:text-white rounded-md"
                     onClick={() => setIsOpen(false)}
                   >
                     Profile
@@ -134,7 +137,7 @@ const Navbar = () => {
                   {isAdmin && (
                     <Link
                       to="/admin"
-                      className="block px-3 py-2 text-gray-700 hover:text-blue-600 transition-colors duration-200"
+                      className="block px-3 py-2 text-gray-300 hover:bg-gray-700 hover:text-white rounded-md"
                       onClick={() => setIsOpen(false)}
                     >
                       Admin Dashboard
@@ -145,19 +148,21 @@ const Navbar = () => {
                       handleSignOut();
                       setIsOpen(false);
                     }}
-                    className="block w-full text-left px-3 py-2 text-gray-700 hover:text-blue-600 transition-colors duration-200"
+                    className="block w-full text-left px-3 py-2 text-gray-300 hover:bg-gray-700 hover:text-white rounded-md"
                   >
                     Sign Out
                   </button>
-                </>
+                </div>
               ) : (
-                <Link
-                  to="/auth"
-                  className="block px-3 py-2 text-gray-700 hover:text-blue-600 transition-colors duration-200"
-                  onClick={() => setIsOpen(false)}
-                >
-                  Sign In
-                </Link>
+                 <div className="pt-4 mt-4 border-t border-gray-700">
+                    <Link
+                        to="/auth"
+                        className="block px-3 py-2 text-gray-300 hover:bg-gray-700 hover:text-white rounded-md"
+                        onClick={() => setIsOpen(false)}
+                    >
+                        Sign In
+                    </Link>
+                 </div>
               )}
             </div>
           </div>
