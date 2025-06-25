@@ -1,32 +1,68 @@
-
-import { useState } from 'react';
-import { useAuth } from '@/hooks/useAuth';
-import { useStudents } from '@/hooks/useStudents';
-import Navbar from '@/components/Navbar';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
-import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '@/components/ui/alert-dialog';
-import { Trash2, Plus, Upload, Download, Edit } from 'lucide-react';
-import { useToast } from '@/hooks/use-toast';
+import { useState } from "react";
+import { useAuth } from "@/hooks/useAuth";
+import { useStudents } from "@/hooks/useStudents";
+import Navbar from "@/components/Navbar";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
+import { Trash2, Plus, Upload, Download, Edit } from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
 
 const AdminDashboard = () => {
   const { user, isAdmin } = useAuth();
-  const { students, loading, addStudent, updateStudent, deleteStudent, deleteAllStudents } = useStudents();
+  const {
+    students,
+    loading,
+    addStudent,
+    updateStudent,
+    deleteStudent,
+    deleteAllStudents,
+  } = useStudents();
   const { toast } = useToast();
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
   const [selectedStudents, setSelectedStudents] = useState<string[]>([]);
   const [editingStudent, setEditingStudent] = useState<any>(null);
 
   const [newStudent, setNewStudent] = useState({
-    name: '',
-    image_url: '',
+    name: "",
+    image_url: "",
     score: 0,
-    team_name: '',
-    project_link: ''
+    team_name: "",
+    project_link: "",
   });
 
   if (!user || !isAdmin) {
@@ -35,7 +71,9 @@ const AdminDashboard = () => {
         <Navbar />
         <div className="container mx-auto px-4 py-16 text-center">
           <h1 className="text-2xl font-bold text-red-600">Access Denied</h1>
-          <p className="text-gray-600 mt-2">You don't have permission to access this page.</p>
+          <p className="text-gray-600 mt-2">
+            You don't have permission to access this page.
+          </p>
         </div>
       </div>
     );
@@ -45,7 +83,13 @@ const AdminDashboard = () => {
     e.preventDefault();
     const result = await addStudent(newStudent);
     if (result.error === null) {
-      setNewStudent({ name: '', image_url: '', score: 0, team_name: '', project_link: '' });
+      setNewStudent({
+        name: "",
+        image_url: "",
+        score: 0,
+        team_name: "",
+        project_link: "",
+      });
       setIsAddDialogOpen(false);
     }
   };
@@ -59,7 +103,7 @@ const AdminDashboard = () => {
 
   const handleSelectAll = (checked: boolean) => {
     if (checked) {
-      setSelectedStudents(students.map(s => s.id));
+      setSelectedStudents(students.map((s) => s.id));
     } else {
       setSelectedStudents([]);
     }
@@ -69,17 +113,17 @@ const AdminDashboard = () => {
     if (checked) {
       setSelectedStudents([...selectedStudents, id]);
     } else {
-      setSelectedStudents(selectedStudents.filter(sid => sid !== id));
+      setSelectedStudents(selectedStudents.filter((sid) => sid !== id));
     }
   };
 
   const downloadCSVTemplate = () => {
     const csvContent = "name,image_url,score,team_name,project_link\n";
-    const blob = new Blob([csvContent], { type: 'text/csv' });
+    const blob = new Blob([csvContent], { type: "text/csv" });
     const url = window.URL.createObjectURL(blob);
-    const a = document.createElement('a');
+    const a = document.createElement("a");
     a.href = url;
-    a.download = 'students_template.csv';
+    a.download = "students_template.csv";
     a.click();
     window.URL.revokeObjectURL(url);
   };
@@ -90,25 +134,25 @@ const AdminDashboard = () => {
       const reader = new FileReader();
       reader.onload = async (event) => {
         const csv = event.target?.result as string;
-        const lines = csv.split('\n');
-        const headers = lines[0].split(',');
-        
+        const lines = csv.split("\n");
+        const headers = lines[0].split(",");
+
         for (let i = 1; i < lines.length; i++) {
-          const values = lines[i].split(',');
+          const values = lines[i].split(",");
           if (values.length === headers.length && values[0]) {
             const studentData = {
               name: values[0],
               image_url: values[1],
               score: parseInt(values[2]) || 0,
               team_name: values[3],
-              project_link: values[4]
+              project_link: values[4],
             };
             await addStudent(studentData);
           }
         }
         toast({
           title: "CSV Upload Complete",
-          description: "Students have been imported successfully."
+          description: "Students have been imported successfully.",
         });
       };
       reader.readAsText(file);
@@ -118,10 +162,12 @@ const AdminDashboard = () => {
   return (
     <div className="min-h-screen bg-gray-50">
       <Navbar />
-      
+
       <div className="container mx-auto px-4 py-8">
         <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">Admin Dashboard</h1>
+          <h1 className="text-3xl font-bold text-gray-900 mb-2">
+            Admin Dashboard
+          </h1>
           <p className="text-gray-600">Manage students and team data</p>
         </div>
 
@@ -142,7 +188,9 @@ const AdminDashboard = () => {
                 <DialogContent>
                   <DialogHeader>
                     <DialogTitle>Add New Student</DialogTitle>
-                    <DialogDescription>Fill in the student details below.</DialogDescription>
+                    <DialogDescription>
+                      Fill in the student details below.
+                    </DialogDescription>
                   </DialogHeader>
                   <form onSubmit={handleAddStudent} className="space-y-4">
                     <div>
@@ -150,7 +198,9 @@ const AdminDashboard = () => {
                       <Input
                         id="name"
                         value={newStudent.name}
-                        onChange={(e) => setNewStudent({...newStudent, name: e.target.value})}
+                        onChange={(e) =>
+                          setNewStudent({ ...newStudent, name: e.target.value })
+                        }
                         required
                       />
                     </div>
@@ -159,7 +209,12 @@ const AdminDashboard = () => {
                       <Input
                         id="image_url"
                         value={newStudent.image_url}
-                        onChange={(e) => setNewStudent({...newStudent, image_url: e.target.value})}
+                        onChange={(e) =>
+                          setNewStudent({
+                            ...newStudent,
+                            image_url: e.target.value,
+                          })
+                        }
                       />
                     </div>
                     <div>
@@ -170,7 +225,12 @@ const AdminDashboard = () => {
                         min="0"
                         max="100"
                         value={newStudent.score}
-                        onChange={(e) => setNewStudent({...newStudent, score: parseInt(e.target.value) || 0})}
+                        onChange={(e) =>
+                          setNewStudent({
+                            ...newStudent,
+                            score: parseInt(e.target.value) || 0,
+                          })
+                        }
                         required
                       />
                     </div>
@@ -179,7 +239,12 @@ const AdminDashboard = () => {
                       <Input
                         id="team_name"
                         value={newStudent.team_name}
-                        onChange={(e) => setNewStudent({...newStudent, team_name: e.target.value})}
+                        onChange={(e) =>
+                          setNewStudent({
+                            ...newStudent,
+                            team_name: e.target.value,
+                          })
+                        }
                         required
                       />
                     </div>
@@ -188,10 +253,17 @@ const AdminDashboard = () => {
                       <Input
                         id="project_link"
                         value={newStudent.project_link}
-                        onChange={(e) => setNewStudent({...newStudent, project_link: e.target.value})}
+                        onChange={(e) =>
+                          setNewStudent({
+                            ...newStudent,
+                            project_link: e.target.value,
+                          })
+                        }
                       />
                     </div>
-                    <Button type="submit" className="w-full">Add Student</Button>
+                    <Button type="submit" className="w-full">
+                      Add Student
+                    </Button>
                   </form>
                 </DialogContent>
               </Dialog>
@@ -209,7 +281,12 @@ const AdminDashboard = () => {
                 onChange={handleCSVUpload}
                 className="mb-2"
               />
-              <Button variant="outline" size="sm" onClick={downloadCSVTemplate} className="w-full">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={downloadCSVTemplate}
+                className="w-full"
+              >
                 <Download className="h-4 w-4 mr-2" />
                 Template
               </Button>
@@ -218,26 +295,37 @@ const AdminDashboard = () => {
 
           <Card>
             <CardHeader className="pb-3">
-              <CardTitle className="text-sm font-medium">Bulk Actions</CardTitle>
+              <CardTitle className="text-sm font-medium">
+                Bulk Actions
+              </CardTitle>
             </CardHeader>
             <CardContent>
               <AlertDialog>
                 <AlertDialogTrigger asChild>
-                  <Button variant="destructive" disabled={selectedStudents.length === 0} className="w-full mb-2">
+                  <Button
+                    variant="destructive"
+                    disabled={selectedStudents.length === 0}
+                    className="w-full mb-2"
+                  >
                     <Trash2 className="h-4 w-4 mr-2" />
                     Delete Selected
                   </Button>
                 </AlertDialogTrigger>
                 <AlertDialogContent>
                   <AlertDialogHeader>
-                    <AlertDialogTitle>Delete Selected Students</AlertDialogTitle>
+                    <AlertDialogTitle>
+                      Delete Selected Students
+                    </AlertDialogTitle>
                     <AlertDialogDescription>
-                      Are you sure you want to delete {selectedStudents.length} selected students? This action cannot be undone.
+                      Are you sure you want to delete {selectedStudents.length}{" "}
+                      selected students? This action cannot be undone.
                     </AlertDialogDescription>
                   </AlertDialogHeader>
                   <AlertDialogFooter>
                     <AlertDialogCancel>Cancel</AlertDialogCancel>
-                    <AlertDialogAction onClick={handleDeleteSelected}>Delete</AlertDialogAction>
+                    <AlertDialogAction onClick={handleDeleteSelected}>
+                      Delete
+                    </AlertDialogAction>
                   </AlertDialogFooter>
                 </AlertDialogContent>
               </AlertDialog>
@@ -260,12 +348,16 @@ const AdminDashboard = () => {
                   <AlertDialogHeader>
                     <AlertDialogTitle>Delete All Students</AlertDialogTitle>
                     <AlertDialogDescription>
-                      Are you sure you want to delete ALL students? This action cannot be undone and will remove all student data permanently.
+                      Are you sure you want to delete ALL students? This action
+                      cannot be undone and will remove all student data
+                      permanently.
                     </AlertDialogDescription>
                   </AlertDialogHeader>
                   <AlertDialogFooter>
                     <AlertDialogCancel>Cancel</AlertDialogCancel>
-                    <AlertDialogAction onClick={deleteAllStudents}>Delete All</AlertDialogAction>
+                    <AlertDialogAction onClick={deleteAllStudents}>
+                      Delete All
+                    </AlertDialogAction>
                   </AlertDialogFooter>
                 </AlertDialogContent>
               </AlertDialog>
@@ -289,7 +381,10 @@ const AdminDashboard = () => {
                     <TableHead className="w-12">
                       <input
                         type="checkbox"
-                        checked={selectedStudents.length === students.length && students.length > 0}
+                        checked={
+                          selectedStudents.length === students.length &&
+                          students.length > 0
+                        }
                         onChange={(e) => handleSelectAll(e.target.checked)}
                       />
                     </TableHead>
@@ -306,10 +401,14 @@ const AdminDashboard = () => {
                         <input
                           type="checkbox"
                           checked={selectedStudents.includes(student.id)}
-                          onChange={(e) => handleSelectStudent(student.id, e.target.checked)}
+                          onChange={(e) =>
+                            handleSelectStudent(student.id, e.target.checked)
+                          }
                         />
                       </TableCell>
-                      <TableCell className="font-medium">{student.name}</TableCell>
+                      <TableCell className="font-medium">
+                        {student.name}
+                      </TableCell>
                       <TableCell>{student.team_name}</TableCell>
                       <TableCell>{student.score}</TableCell>
                       <TableCell>
@@ -325,14 +424,21 @@ const AdminDashboard = () => {
                             </AlertDialogTrigger>
                             <AlertDialogContent>
                               <AlertDialogHeader>
-                                <AlertDialogTitle>Delete Student</AlertDialogTitle>
+                                <AlertDialogTitle>
+                                  Delete Student
+                                </AlertDialogTitle>
                                 <AlertDialogDescription>
-                                  Are you sure you want to delete {student.name}? This action cannot be undone.
+                                  Are you sure you want to delete {student.name}
+                                  ? This action cannot be undone.
                                 </AlertDialogDescription>
                               </AlertDialogHeader>
                               <AlertDialogFooter>
                                 <AlertDialogCancel>Cancel</AlertDialogCancel>
-                                <AlertDialogAction onClick={() => deleteStudent(student.id)}>Delete</AlertDialogAction>
+                                <AlertDialogAction
+                                  onClick={() => deleteStudent(student.id)}
+                                >
+                                  Delete
+                                </AlertDialogAction>
                               </AlertDialogFooter>
                             </AlertDialogContent>
                           </AlertDialog>

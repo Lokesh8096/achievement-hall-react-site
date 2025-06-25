@@ -40,3 +40,8 @@
 .read-the-docs {
   color: #888;
 }
+.custom-progress-wrapper .CircularProgressbar-text {
+  font-weight: 700; /* equivalent to Tailwind's font-bold */
+  font-size: 16px;  /* adjust to match Tailwind scale */
+  font-family: 'Poppins', sans-serif; /* or inherit/tailwind base */
+}

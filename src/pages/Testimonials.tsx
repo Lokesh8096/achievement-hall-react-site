@@ -1,6 +1,12 @@
-
 import Navbar from "@/components/Navbar";
-import { MessageSquare, Play, Users, Code, Database, Smartphone } from "lucide-react";
+import {
+  MessageSquare,
+  Play,
+  Users,
+  Code,
+  Database,
+  Smartphone,
+} from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 
@@ -11,41 +17,49 @@ const Testimonials = () => {
       name: "Priya Sharma",
       role: "Full Stack Developer",
       company: "Tech Innovators Inc.",
-      image: "https://images.unsplash.com/photo-1494790108755-2616b612b786?w=150&h=150&fit=crop&crop=face",
-      quote: "The comprehensive curriculum and hands-on projects at Niat transformed my career. I went from a complete beginner to landing my dream job as a Full Stack Developer.",
+      image:
+        "https://images.unsplash.com/photo-1494790108755-2616b612b786?w=150&h=150&fit=crop&crop=face",
+      quote:
+        "The comprehensive curriculum and hands-on projects at Niat transformed my career. I went from a complete beginner to landing my dream job as a Full Stack Developer.",
       sector: "Web Development",
-      videoId: "dQw4w9WgXcQ"
+      videoId: "dQw4w9WgXcQ",
     },
     {
       id: 2,
       name: "Rahul Kumar",
       role: "Data Scientist",
       company: "Analytics Pro Solutions",
-      image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&h=150&fit=crop&crop=face",
-      quote: "The data science program opened doors I never knew existed. The practical approach and real-world projects gave me the confidence to excel in my field.",
+      image:
+        "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&h=150&fit=crop&crop=face",
+      quote:
+        "The data science program opened doors I never knew existed. The practical approach and real-world projects gave me the confidence to excel in my field.",
       sector: "Data Science",
-      videoId: "dQw4w9WgXcQ"
+      videoId: "dQw4w9WgXcQ",
     },
     {
       id: 3,
       name: "Anitha Reddy",
       role: "Mobile App Developer",
       company: "NextGen Apps",
-      image: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=150&h=150&fit=crop&crop=face",
-      quote: "Learning mobile development here was an incredible journey. The mentorship and project-based learning approach made all the difference in my career.",
+      image:
+        "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=150&h=150&fit=crop&crop=face",
+      quote:
+        "Learning mobile development here was an incredible journey. The mentorship and project-based learning approach made all the difference in my career.",
       sector: "Mobile Development",
-      videoId: "dQw4w9WgXcQ"
+      videoId: "dQw4w9WgXcQ",
     },
     {
       id: 4,
       name: "Vikram Singh",
       role: "DevOps Engineer",
       company: "Cloud Solutions Ltd.",
-      image: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=150&h=150&fit=crop&crop=face",
-      quote: "The DevOps track here is exceptional. I learned everything from CI/CD to cloud deployment, which directly helped me secure my current role.",
+      image:
+        "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=150&h=150&fit=crop&crop=face",
+      quote:
+        "The DevOps track here is exceptional. I learned everything from CI/CD to cloud deployment, which directly helped me secure my current role.",
       sector: "DevOps",
-      videoId: "dQw4w9WgXcQ"
-    }
+      videoId: "dQw4w9WgXcQ",
+    },
   ];
 
   const getSectorIcon = (sector: string) => {
@@ -75,16 +89,19 @@ const Testimonials = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-[#172134]">
       <Navbar />
-      
+
       {/* Hero Section */}
       <section className="bg-gradient-to-r from-blue-600 to-purple-600 text-white py-16">
         <div className="container mx-auto px-4 text-center">
           <MessageSquare className="h-16 w-16 mx-auto mb-6" />
-          <h1 className="text-4xl md:text-5xl font-bold mb-4">Student Success Stories</h1>
+          <h1 className="text-4xl md:text-5xl font-bold mb-4">
+            Student Success Stories
+          </h1>
           <p className="text-xl md:text-2xl mb-8 max-w-3xl mx-auto">
-            Hear from our graduates who have transformed their careers and achieved their dreams
+            Hear from our graduates who have transformed their careers and
+            achieved their dreams
           </p>
         </div>
       </section>
@@ -93,10 +110,13 @@ const Testimonials = () => {
       <section className="container mx-auto px-4 py-16">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
           {testimonials.map((testimonial) => (
-            <Card key={testimonial.id} className="overflow-hidden hover:shadow-xl transition-shadow duration-300">
+            <Card
+              key={testimonial.id}
+              className="overflow-hidden hover:shadow-xl transition-shadow duration-300"
+            >
               <CardContent className="p-0">
                 {/* Video Section */}
-                <div className="relative aspect-video bg-gray-900">
+                <div className="group relative aspect-video rounded-xl overflow-hidden bg-gray-900 shadow-lg">
                   <iframe
                     src={`https://www.youtube.com/embed/${testimonial.videoId}`}
                     title={`${testimonial.name} Testimonial`}
@@ -105,11 +125,14 @@ const Testimonials = () => {
                     allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                     allowFullScreen
                   />
-                  <div className="absolute top-4 right-4">
-                    <Play className="h-8 w-8 text-white opacity-75" />
+                  <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
+                    <Play className="h-12 w-12 text-white drop-shadow-lg group-hover:scale-110 transition-transform duration-300" />
+                  </div>
+                  <div className="absolute bottom-2 left-2 bg-black/60 text-white text-xs sm:text-sm px-3 py-1 rounded">
+                    {testimonial.name}'s Testimonial
                   </div>
                 </div>
-                
+
                 {/* Content Section */}
                 <div className="p-6">
                   <div className="flex items-center space-x-4 mb-4">
@@ -119,17 +142,25 @@ const Testimonials = () => {
                       className="w-16 h-16 rounded-full object-cover"
                     />
                     <div>
-                      <h3 className="text-xl font-bold text-gray-900">{testimonial.name}</h3>
+                      <h3 className="text-xl font-bold text-gray-900">
+                        {testimonial.name}
+                      </h3>
                       <p className="text-gray-600">{testimonial.role}</p>
-                      <p className="text-sm text-blue-600 font-medium">{testimonial.company}</p>
+                      <p className="text-sm text-blue-600 font-medium">
+                        {testimonial.company}
+                      </p>
                     </div>
                   </div>
-                  
+
                   <blockquote className="text-gray-700 mb-4 italic">
                     "{testimonial.quote}"
                   </blockquote>
-                  
-                  <Badge className={`${getSectorColor(testimonial.sector)} flex items-center space-x-1 w-fit`}>
+
+                  <Badge
+                    className={`${getSectorColor(
+                      testimonial.sector
+                    )} flex items-center space-x-1 w-fit`}
+                  >
                     {getSectorIcon(testimonial.sector)}
                     <span>{testimonial.sector}</span>
                   </Badge>
@@ -145,9 +176,11 @@ const Testimonials = () => {
         <div className="container mx-auto px-4">
           <div className="text-center mb-12">
             <h2 className="text-3xl md:text-4xl font-bold mb-4">Our Impact</h2>
-            <p className="text-xl opacity-90">Numbers that speak for our success</p>
+            <p className="text-xl opacity-90">
+              Numbers that speak for our success
+            </p>
           </div>
-          
+
           <div className="grid grid-cols-1 md:grid-cols-4 gap-8 text-center">
             <div>
               <div className="text-4xl md:text-5xl font-bold mb-2">2000+</div>
@@ -175,7 +208,8 @@ const Testimonials = () => {
           Ready to Start Your Success Story?
         </h2>
         <p className="text-xl text-gray-600 mb-8 max-w-2xl mx-auto">
-          Join thousands of students who have transformed their careers with our comprehensive programs
+          Join thousands of students who have transformed their careers with our
+          comprehensive programs
         </p>
         <div className="space-x-4">
           <button className="bg-blue-600 text-white px-8 py-3 rounded-lg font-semibold hover:bg-blue-700 transition-colors">

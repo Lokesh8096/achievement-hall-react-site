@@ -1,10 +1,15 @@
-
 import { useState, useEffect } from "react";
 
 const images = [
   "https://images.unsplash.com/photo-1649972904349-6e44c42644a7?w=1200&h=400&fit=crop",
   "https://images.unsplash.com/photo-1488590528505-98d2b5aba04b?w=1200&h=400&fit=crop",
-  "https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?w=1200&h=400&fit=crop",
+  "https://lh3.googleusercontent.com/p/AF1QipMnTkX3NC9ROOysxE7j87M4trlNJOP0KapU4-yx=s1360-w1360-h1020-rw",
+  "https://lh3.googleusercontent.com/p/AF1QipPk-b0lFvMTvLW34v--jmb4rS894A93GRT7HoHS=s1360-w1360-h1020-rw",
+  "https://lh3.googleusercontent.com/p/AF1QipPPKazf2Ib6vOuFWbZfU9HqWVycR39Rz2Ks4dLb=s1360-w1360-h1020-rw",
+  "https://lh3.googleusercontent.com/p/AF1QipNtN1V-cxIIcajdTGCk47fF-eCRlLStZhkeLBY3=s1360-w1360-h1020-rw",
+  "https://lh3.googleusercontent.com/gps-cs-s/AC9h4npXO4QuM_EnfycsyYypl_44ntcwSn4lbZ9uXpHx5UvF8FWmqjZs84fy0UcpoYX8tdQSXMwZCaGDcSNpPLR89Lm_8vIkj4Iwrl86q9t0oZoVHvDoS7wwtO95aoxAF0upRYgRYUiyucfvgfrz=s1360-w1360-h1020-rw",
+  "https://lh3.googleusercontent.com/p/AF1QipNBuzOQSEzGFNQFA1zizhzSilyGsDZDLhini9P8=s1360-w1360-h1020-rw",
+  "https://lh3.googleusercontent.com/p/AF1QipMfb67HeAJ7oA2z-b1iq5RA9XnI9srx7ILabQbV=s1360-w1360-h1020-rw",
 ];
 
 const ImageCarousel = () => {
@@ -20,8 +25,8 @@ const ImageCarousel = () => {
 
   return (
     <div className="relative h-96 overflow-hidden rounded-xl">
-      <div className="absolute inset-0 bg-gradient-to-r from-blue-600/50 to-purple-600/50 z-10"></div>
-      
+      <div className="absolute"></div>
+
       {images.map((image, index) => (
         <div
           key={index}
@@ -36,14 +41,9 @@ const ImageCarousel = () => {
           />
         </div>
       ))}
+
       
-      <div className="absolute inset-0 flex items-center justify-center z-20">
-        <div className="text-center text-white">
-          <h1 className="text-4xl md:text-6xl font-bold mb-4">Hall of Fame</h1>
-          <p className="text-xl md:text-2xl opacity-90">Celebrating Student Excellence</p>
-        </div>
-      </div>
-      
+
       <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex space-x-2 z-20">
         {images.map((_, index) => (
           <button

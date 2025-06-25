@@ -51,7 +51,7 @@ const AboutUs = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-[#172134]">
       <Navbar />
       
       {/* Hero Section */}
@@ -77,8 +77,8 @@ const AboutUs = () => {
       <section className="container mx-auto px-4 py-16">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
           <div>
-            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-6">Our Story</h2>
-            <div className="space-y-4 text-gray-700 leading-relaxed">
+            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-6 text-white">Our Story</h2>
+            <div className="space-y-4 text-gray-700 leading-relaxed text-white">
               <p>
                 Founded with a vision to democratize quality tech education, NxtWave has been at the forefront 
                 of educational innovation since our inception. We recognized the growing gap between what 
@@ -150,8 +150,8 @@ const AboutUs = () => {
       {/* Achievements */}
       <section className="container mx-auto px-4 py-16">
         <div className="text-center mb-12">
-          <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">Our Achievements</h2>
-          <p className="text-xl text-gray-600">Numbers that reflect our commitment to excellence</p>
+          <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4 text-white">Our Achievements</h2>
+          <p className="text-xl text-gray-600 text-white">Numbers that reflect our commitment to excellence</p>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
@@ -243,9 +243,9 @@ const AboutUs = () => {
             <button className="bg-blue-600 text-white px-8 py-3 rounded-lg font-semibold hover:bg-blue-700 transition-colors mr-4">
               Contact Us
             </button>
-            <button className="border border-white text-white px-8 py-3 rounded-lg font-semibold hover:bg-white hover:text-gray-900 transition-colors">
+            {/* <button className="border border-white text-white px-8 py-3 rounded-lg font-semibold hover:bg-white hover:text-gray-900 transition-colors">
               Schedule a Call
-            </button>
+            </button> */}
           </div>
         </div>
       </section>
