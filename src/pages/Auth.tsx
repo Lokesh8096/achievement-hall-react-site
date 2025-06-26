@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { useAuth } from '@/hooks/useAuth';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -79,6 +78,9 @@ const Auth = () => {
                   {loading ? 'Signing In...' : 'Sign In'}
                 </Button>
               </form>
+              <div className="text-center mt-2">
+                <a href="/ForgotPassword" className="text-blue-600 hover:underline text-sm">Forgot Password?</a>
+              </div>
             </TabsContent>
             
             <TabsContent value="signup">

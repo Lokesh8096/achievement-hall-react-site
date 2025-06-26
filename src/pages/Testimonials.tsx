@@ -1,7 +1,9 @@
+import { useState } from "react";
 import Navbar from "@/components/Navbar";
 import {
   MessageSquare,
   Play,
+  Video,
   Users,
   Code,
   Database,
@@ -10,57 +12,29 @@ import {
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 
+const testimonials = [
+  {
+    videoUrl: "https://youtu.be/_omgmUTCvwY?si=TJckWHULOqu-Zq6P",
+  },
+  {
+    videoUrl: "https://youtu.be/8dneZHv9vus?si=7L93RjFJFka-IThF",
+  },
+  {
+    videoUrl: "https://youtu.be/TN3CYI4MRAw?si=rfX_z0KyrS_IUgwD",
+  },
+  {
+    videoUrl: "https://youtu.be/YkeEdn5Cfiw?si=3a3Wj2731v2Ri36r",
+  },
+];
+
+function getYoutubeId(url: string) {
+  // Extract the video ID from the URL
+  const match = url.match(/(?:youtu.be\/|v=)([\w-]{11})/);
+  return match ? match[1] : "";
+}
+
 const Testimonials = () => {
-  const testimonials = [
-    {
-      id: 1,
-      name: "Priya Sharma",
-      role: "Full Stack Developer",
-      company: "Tech Innovators Inc.",
-      image:
-        "https://images.unsplash.com/photo-1494790108755-2616b612b786?w=150&h=150&fit=crop&crop=face",
-      quote:
-        "The comprehensive curriculum and hands-on projects at Niat transformed my career. I went from a complete beginner to landing my dream job as a Full Stack Developer.",
-      sector: "Web Development",
-      videoId: "dQw4w9WgXcQ",
-    },
-    {
-      id: 2,
-      name: "Rahul Kumar",
-      role: "Data Scientist",
-      company: "Analytics Pro Solutions",
-      image:
-        "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&h=150&fit=crop&crop=face",
-      quote:
-        "The data science program opened doors I never knew existed. The practical approach and real-world projects gave me the confidence to excel in my field.",
-      sector: "Data Science",
-      videoId: "dQw4w9WgXcQ",
-    },
-    {
-      id: 3,
-      name: "Anitha Reddy",
-      role: "Mobile App Developer",
-      company: "NextGen Apps",
-      image:
-        "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=150&h=150&fit=crop&crop=face",
-      quote:
-        "Learning mobile development here was an incredible journey. The mentorship and project-based learning approach made all the difference in my career.",
-      sector: "Mobile Development",
-      videoId: "dQw4w9WgXcQ",
-    },
-    {
-      id: 4,
-      name: "Vikram Singh",
-      role: "DevOps Engineer",
-      company: "Cloud Solutions Ltd.",
-      image:
-        "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=150&h=150&fit=crop&crop=face",
-      quote:
-        "The DevOps track here is exceptional. I learned everything from CI/CD to cloud deployment, which directly helped me secure my current role.",
-      sector: "DevOps",
-      videoId: "dQw4w9WgXcQ",
-    },
-  ];
+  const [playing, setPlaying] = useState<number | null>(null);
 
   const getSectorIcon = (sector: string) => {
     switch (sector) {
@@ -89,7 +63,7 @@ const Testimonials = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[#172134]">
+    <div className="min-h-screen bg-[#0f172a] text-white pt-16">
       <Navbar />
 
       {/* Hero Section */}
@@ -107,67 +81,52 @@ const Testimonials = () => {
       </section>
 
       {/* Testimonials Grid */}
-      <section className="container mx-auto px-4 py-16">
+      <section className="container mx-auto px-4 py-16 bg-[#0f172a] text-white">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-          {testimonials.map((testimonial) => (
-            <Card
-              key={testimonial.id}
-              className="overflow-hidden hover:shadow-xl transition-shadow duration-300"
-            >
-              <CardContent className="p-0">
-                {/* Video Section */}
-                <div className="group relative aspect-video rounded-xl overflow-hidden bg-gray-900 shadow-lg">
-                  <iframe
-                    src={`https://www.youtube.com/embed/${testimonial.videoId}`}
-                    title={`${testimonial.name} Testimonial`}
-                    className="w-full h-full"
-                    frameBorder="0"
-                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                    allowFullScreen
-                  />
-                  <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
-                    <Play className="h-12 w-12 text-white drop-shadow-lg group-hover:scale-110 transition-transform duration-300" />
-                  </div>
-                  <div className="absolute bottom-2 left-2 bg-black/60 text-white text-xs sm:text-sm px-3 py-1 rounded">
-                    {testimonial.name}'s Testimonial
-                  </div>
-                </div>
-
-                {/* Content Section */}
-                <div className="p-6">
-                  <div className="flex items-center space-x-4 mb-4">
-                    <img
-                      src={testimonial.image}
-                      alt={testimonial.name}
-                      className="w-16 h-16 rounded-full object-cover"
+          {testimonials.map((testimonial, idx) => {
+            const videoId = getYoutubeId(testimonial.videoUrl);
+            const thumbnail = `https://img.youtube.com/vi/${videoId}/hqdefault.jpg`;
+            return (
+              <div
+                key={testimonial.videoUrl}
+                className="overflow-hidden bg-[#1e293b] text-white rounded-xl shadow-lg hover:shadow-2xl transition-shadow duration-300 border border-gray-700 flex flex-col items-center"
+              >
+                <div className="relative w-full aspect-video cursor-pointer" onClick={() => setPlaying(idx)}>
+                  {playing === idx ? (
+                    <iframe
+                      src={`https://www.youtube.com/embed/${videoId}?autoplay=1`}
+                      title={`Testimonial Video ${idx + 1}`}
+                      className="w-full h-full rounded-t-xl"
+                      frameBorder="0"
+                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                      allowFullScreen
                     />
-                    <div>
-                      <h3 className="text-xl font-bold text-gray-900">
-                        {testimonial.name}
-                      </h3>
-                      <p className="text-gray-600">{testimonial.role}</p>
-                      <p className="text-sm text-blue-600 font-medium">
-                        {testimonial.company}
-                      </p>
-                    </div>
-                  </div>
-
-                  <blockquote className="text-gray-700 mb-4 italic">
-                    "{testimonial.quote}"
-                  </blockquote>
-
-                  <Badge
-                    className={`${getSectorColor(
-                      testimonial.sector
-                    )} flex items-center space-x-1 w-fit`}
-                  >
-                    {getSectorIcon(testimonial.sector)}
-                    <span>{testimonial.sector}</span>
-                  </Badge>
+                  ) : (
+                    <>
+                      <img
+                        src={thumbnail}
+                        alt={`Testimonial Video ${idx + 1}`}
+                        className="w-full h-full object-cover rounded-t-xl"
+                      />
+                      <div className="absolute inset-0 flex items-center justify-center bg-black/40">
+                        <Play className="h-16 w-16 text-white opacity-90" />
+                      </div>
+                    </>
+                  )}
                 </div>
-              </CardContent>
-            </Card>
-          ))}
+              </div>
+            );
+          })}
+        </div>
+        <div className="w-full flex justify-center mt-12">
+          <a
+            href="https://apply.niatindia.com/login?utm_campaign=application&utm_source=hero-apply&utm_medium=website"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-4 px-10 rounded-full text-lg shadow-lg transition-colors duration-200"
+          >
+            Apply Now
+          </a>
         </div>
       </section>
 
@@ -212,7 +171,11 @@ const Testimonials = () => {
           comprehensive programs
         </p>
         <div className="space-x-4">
-          <button className="bg-blue-600 text-white px-8 py-3 rounded-lg font-semibold hover:bg-blue-700 transition-colors">
+          <button className="bg-blue-600 text-white px-8 py-3 rounded-lg font-semibold hover:bg-blue-700 transition-colors"
+           onClick={() => {
+            window.location.href = "https://apply.niatindia.com/login?utm_campaign=application&utm_source=hero-apply&utm_medium=website";
+           }}
+          >
             Enroll Now
           </button>
           <button className="border border-blue-600 text-blue-600 px-8 py-3 rounded-lg font-semibold hover:bg-blue-50 transition-colors">

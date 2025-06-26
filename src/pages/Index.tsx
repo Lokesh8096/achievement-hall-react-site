@@ -1,39 +1,135 @@
+import { useState } from "react";
 import Navbar from "@/components/Navbar";
 import ImageCarousel from "@/components/ImageCarousel";
 import StudentCard from "@/components/StudentCard";
 import { useStudents } from "@/hooks/useStudents";
 import { Skeleton } from "@/components/ui/skeleton";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import { Button } from "@/components/ui/button";
+import { ChevronDown } from "lucide-react"; // optional for dropdown arrow
+
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+
 
 const Index = () => {
   const { students, loading } = useStudents();
+  const [open, setOpen] = useState(false);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [selectedTeam, setSelectedTeam] = useState("All");
+
+  const uniqueTeams = [...new Set(students.map((s) => s.team_name))];
+
+  const filteredStudents = students.filter((student) => {
+    const matchesName = student.name.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesTeam = selectedTeam === "All" || student.team_name === selectedTeam;
+    return matchesName && matchesTeam;
+  });
+
+  const resetFilters = () => {
+    setSearchTerm("");
+    setSelectedTeam("All");
+  };
 
   return (
-    <div className="min-h-screen bg-[#172134] text-gray-800 bg-cover bg-center bg-no-repeat " >
+    <div className="min-h-screen bg-[#0f172a] text-white pt-16">
       <Navbar />
-      
-      {/* Hero Section with Carousel */}
+
+      {/* Carousel Section */}
       <section className="container mx-auto px-4 py-8">
         <ImageCarousel />
       </section>
 
+      {/* Filter & Search Section */}
+      <section className="container mx-auto px-4 py-6">
+        <div className="flex flex-col lg:flex-row items-center justify-between gap-4">
+          {/* Left: Dropdown + Search */}
+          <div className="flex flex-wrap gap-4 items-center">
+            {/* Team Dropdown using Shadcn UI */}
+          <Popover open={open} onOpenChange={setOpen}>
+  <PopoverTrigger asChild>
+    <Button
+      variant="outline"
+      className="w-64 justify-between bg-[#1e293b] text-white border border-gray-600 text-sm font-medium"
+    >
+      {selectedTeam === "All" ? "All Teams" : selectedTeam}
+      <ChevronDown className="ml-2 h-4 w-4 text-white" />
+    </Button>
+  </PopoverTrigger>
+
+  <PopoverContent
+    className="w-64 p-0 max-h-64 overflow-y-auto no-scrollbar bg-[#1e293b] text-white border border-gray-600 z-50"
+    align="start"
+  >
+    <div className="flex flex-col text-sm">
+      <button
+        onClick={() => {
+          setSelectedTeam("All");
+          setOpen(false);
+        }}
+        className={`text-left px-4 py-2 hover:bg-blue-800 ${
+          selectedTeam === "All" ? "bg-blue-900 font-semibold" : ""
+        }`}
+      >
+        All Teams
+      </button>
+      {uniqueTeams.map((team) => (
+        <button
+          key={team}
+          onClick={() => {
+            setSelectedTeam(team);
+            setOpen(false);
+          }}
+          className={`text-left px-4 py-2 hover:bg-blue-800 ${
+            selectedTeam === team ? "bg-blue-900 font-semibold" : ""
+          }`}
+        >
+          {team}
+        </button>
+      ))}
+    </div>
+  </PopoverContent>
+</Popover>
+
+
+
+            {/* Search Input */}
+            <input
+              type="text"
+              placeholder="Search by student name..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="px-4 py-2 rounded-md bg-[#1e293b] text-white border border-gray-600 w-64 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
+          </div>
+
+          {/* Right: Reset Button */}
+          <button
+            onClick={resetFilters}
+            className="px-6 py-2 rounded-full border text-sm font-semibold text-blue-400 border-gray-600 hover:bg-blue-900 transition"
+          >
+            Reset Filters
+          </button>
+        </div>
+      </section>
+
       {/* Student Cards Section */}
       <section className="container mx-auto px-4 py-12">
-        <div className="text-center mb-12">
-          <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4 text-white">
-            Our Top Performers
-          </h2>
-          <p className="text-lg text-gray-600 max-w-2xl mx-auto text-white">
-            Meet our exceptional students who have demonstrated outstanding
-            skills and dedication in their projects.
-          </p>
-        </div>
-
         {loading ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {[...Array(6)].map((_, i) => (
               <div
                 key={i}
-                className="bg-white rounded-xl shadow-md overflow-hidden"
+                className="bg-[#1e293b] rounded-xl shadow-md overflow-hidden"
               >
                 <Skeleton className="h-48 w-full" />
                 <div className="p-6">
@@ -47,10 +143,16 @@ const Index = () => {
             ))}
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 sm:grid-cols-2 lg:grid-cols-4">
-            {students.map((student) => (
-              <StudentCard key={student.id} student={student} />
-            ))}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+            {filteredStudents.length > 0 ? (
+              filteredStudents.map((student) => (
+                <StudentCard key={student.id} student={student} />
+              ))
+            ) : (
+              <div className="text-white col-span-full text-center text-xl">
+                No students found.
+              </div>
+            )}
           </div>
         )}
       </section>

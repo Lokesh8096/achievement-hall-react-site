@@ -1,10 +1,7 @@
 import { useState, useEffect } from "react";
 
 const images = [
-  "https://images.unsplash.com/photo-1649972904349-6e44c42644a7?w=1200&h=400&fit=crop",
-  "https://images.unsplash.com/photo-1488590528505-98d2b5aba04b?w=1200&h=400&fit=crop",
-  "https://lh3.googleusercontent.com/p/AF1QipMnTkX3NC9ROOysxE7j87M4trlNJOP0KapU4-yx=s1360-w1360-h1020-rw",
-  "https://lh3.googleusercontent.com/p/AF1QipPk-b0lFvMTvLW34v--jmb4rS894A93GRT7HoHS=s1360-w1360-h1020-rw",
+  "https://framerusercontent.com/images/e3UvT1aA2EPeGadEJKZkm9dXY.jpg",
   "https://lh3.googleusercontent.com/p/AF1QipPPKazf2Ib6vOuFWbZfU9HqWVycR39Rz2Ks4dLb=s1360-w1360-h1020-rw",
   "https://lh3.googleusercontent.com/p/AF1QipNtN1V-cxIIcajdTGCk47fF-eCRlLStZhkeLBY3=s1360-w1360-h1020-rw",
   "https://lh3.googleusercontent.com/gps-cs-s/AC9h4npXO4QuM_EnfycsyYypl_44ntcwSn4lbZ9uXpHx5UvF8FWmqjZs84fy0UcpoYX8tdQSXMwZCaGDcSNpPLR89Lm_8vIkj4Iwrl86q9t0oZoVHvDoS7wwtO95aoxAF0upRYgRYUiyucfvgfrz=s1360-w1360-h1020-rw",

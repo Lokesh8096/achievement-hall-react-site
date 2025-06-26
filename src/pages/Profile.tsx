@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import Navbar from "@/components/Navbar";
@@ -16,17 +15,31 @@ const Profile = () => {
     confirmPassword: "",
     name: ""
   });
+  const [passwordForm, setPasswordForm] = useState({
+    currentPassword: "",
+    newPassword: "",
+    confirmNewPassword: ""
+  });
+  const [passwordError, setPasswordError] = useState("");
+  const [passwordSuccess, setPasswordSuccess] = useState("");
 
   useEffect(() => {
-    if (user) {
-      // Redirect authenticated users to home
-      navigate("/");
+    if (!user && !loading) {
+      // Redirect unauthenticated users to login
+      navigate("/auth");
     }
-  }, [user, navigate]);
+  }, [user, loading, navigate]);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({
       ...formData,
+      [e.target.name]: e.target.value
+    });
+  };
+
+  const handlePasswordInput = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setPasswordForm({
+      ...passwordForm,
       [e.target.name]: e.target.value
     });
   };
@@ -41,6 +54,36 @@ const Profile = () => {
       await signUp(formData.email, formData.password);
     } else {
       await signIn(formData.email, formData.password);
+    }
+  };
+
+  const handleChangePassword = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setPasswordError("");
+    setPasswordSuccess("");
+    if (passwordForm.newPassword !== passwordForm.confirmNewPassword) {
+      setPasswordError("New passwords do not match.");
+      return;
+    }
+    if (!passwordForm.currentPassword || !passwordForm.newPassword) {
+      setPasswordError("All fields are required.");
+      return;
+    }
+    try {
+      // Supabase requires the user to be logged in; currentPassword is not used by Supabase
+      const { error, data } = await import('@/lib/supabaseClient').then(({ supabase }) =>
+        supabase.auth.updateUser({ password: passwordForm.newPassword })
+      );
+      console.log('Supabase updateUser response:', { error, data });
+      if (error) {
+        setPasswordError(error.message || JSON.stringify(error) || 'Failed to change password.');
+      } else {
+        setPasswordSuccess('Password changed successfully!');
+        setPasswordForm({ currentPassword: '', newPassword: '', confirmNewPassword: '' });
+      }
+    } catch (err) {
+      console.log('Exception in handleChangePassword:', err);
+      setPasswordError('Failed to change password.');
     }
   };
 
@@ -63,9 +106,8 @@ const Profile = () => {
   // If user is authenticated, show profile page
   if (user) {
     return (
-      <div className="min-h-screen bg-gray-50">
+      <div className="min-h-screen bg-gray-50 pt-16">
         <Navbar />
-        
         <div className="container mx-auto px-4 py-12">
           <div className="max-w-md mx-auto">
             <div className="bg-white rounded-xl shadow-lg p-8">
@@ -86,6 +128,48 @@ const Profile = () => {
                     <span className="text-blue-700 font-medium">Administrator</span>
                   </div>
                 )}
+              </div>
+
+              {/* Change Password Section */}
+              <div className="mt-8">
+                <h3 className="text-lg font-semibold mb-4 text-gray-900">Change Password</h3>
+                <form onSubmit={handleChangePassword} className="space-y-4">
+                  <input
+                    type="password"
+                    name="currentPassword"
+                    value={passwordForm.currentPassword}
+                    onChange={handlePasswordInput}
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    placeholder="Current Password"
+                    required
+                  />
+                  <input
+                    type="password"
+                    name="newPassword"
+                    value={passwordForm.newPassword}
+                    onChange={handlePasswordInput}
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    placeholder="New Password"
+                    required
+                  />
+                  <input
+                    type="password"
+                    name="confirmNewPassword"
+                    value={passwordForm.confirmNewPassword}
+                    onChange={handlePasswordInput}
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    placeholder="Confirm New Password"
+                    required
+                  />
+                  {passwordError && <div className="text-red-600 text-sm">{passwordError}</div>}
+                  {passwordSuccess && <div className="text-green-600 text-sm">{passwordSuccess}</div>}
+                  <button
+                    type="submit"
+                    className="w-full bg-blue-600 hover:bg-blue-700 text-white py-3 px-4 rounded-lg font-medium transition-colors duration-200"
+                  >
+                    Change Password
+                  </button>
+                </form>
               </div>
 
               <div className="mt-8 space-y-4">

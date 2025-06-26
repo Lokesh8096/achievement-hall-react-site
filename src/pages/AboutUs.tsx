@@ -1,4 +1,3 @@
-
 import Navbar from "@/components/Navbar";
 import { Info, Users, Target, Award, MapPin, Phone, Mail, Globe } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
@@ -51,7 +50,7 @@ const AboutUs = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-[#172134]">
+    <div className="min-h-screen bg-[#0f172a] text-white pt-16">
       <Navbar />
       
       {/* Hero Section */}

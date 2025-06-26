@@ -17,7 +17,7 @@ interface StudentCardProps {
 const StudentCard = ({ student }: StudentCardProps) => {
   return (
     <Link to={`/student/${student.id}`}>
-      <div className="bg-white rounded-xl border-4 border-yellow-300 shadow-md hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 overflow-hidden w-full group">
+      <div className="bg-[#abb2b9] rounded-xl border-4 border-yellow-300 shadow-md hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 overflow-hidden w-full group">
         {/* Image */}
         <div className="relative h-72 sm:h-80 md:h-96">
           <img
@@ -30,7 +30,7 @@ const StudentCard = ({ student }: StudentCardProps) => {
         {/* Content */}
         <div className="p-5 space-y-4">
           {/* Label */}
-          <p className="text-sm text-gray-500">TEAM PERFORMANCE</p>
+          <p className="text-sm text-gray-500"></p>
 
           {/* Score and Bar */}
           <div className="flex items-center justify-between">

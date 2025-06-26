@@ -1,4 +1,3 @@
-
 import Navbar from "@/components/Navbar";
 import { useStudents } from "@/hooks/useStudents";
 import { Trophy, Medal, Award } from "lucide-react";
@@ -61,7 +60,7 @@ const Leaderboard = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[#172134]">
+    <div className="min-h-screen bg-[#0f172a] text-white pt-16">
       <Navbar />
       
       <div className="container mx-auto px-4 py-12">
@@ -126,62 +125,49 @@ const Leaderboard = () => {
             </div>
 
             {/* Full Rankings Table */}
-            <div className="bg-white rounded-xl shadow-lg overflow-hidden">
-              <div className="px-6 py-4 bg-gray-50 border-b">
-                <h2 className="text-xl font-bold text-gray-900">Complete Rankings</h2>
-              </div>
-              
-              <div className="overflow-x-auto">
-                <table className="w-full">
-                  <thead className="bg-gray-50">
-                    <tr>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        Rank
-                      </th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        Team Name
-                      </th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        Average Score
-                      </th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        Members
-                      </th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        Total Score
-                      </th>
-                    </tr>
-                  </thead>
-                  <tbody className="bg-white divide-y divide-gray-200">
-                    {teamRankings.map((team, index) => {
-                      const rank = index + 1;
-                      return (
-                        <tr key={team.name} className="hover:bg-gray-50">
-                          <td className="px-6 py-4 whitespace-nowrap">
-                            <div className="flex items-center">
-                              <span className="text-lg font-bold text-gray-900 mr-2">#{rank}</span>
-                              {rank <= 3 && getBadgeIcon(rank)}
-                            </div>
-                          </td>
-                          <td className="px-6 py-4 whitespace-nowrap">
-                            <div className="text-lg font-semibold text-gray-900">{team.name}</div>
-                          </td>
-                          <td className="px-6 py-4 whitespace-nowrap">
-                            <div className="text-lg font-bold text-blue-600">{team.averageScore}</div>
-                          </td>
-                          <td className="px-6 py-4 whitespace-nowrap">
-                            <div className="text-sm text-gray-900">{team.memberCount} members</div>
-                          </td>
-                          <td className="px-6 py-4 whitespace-nowrap">
-                            <div className="text-sm text-gray-500">{team.totalScore}</div>
-                          </td>
-                        </tr>
-                      );
-                    })}
-                  </tbody>
-                </table>
-              </div>
-            </div>
+<div className="bg-[#818ea1] rounded-xl shadow-lg overflow-hidden">
+  <div className="px-6 py-4 border-b border-gray-700">
+    <h2 className="text-xl font-bold text-white">Complete Rankings</h2>
+  </div>
+
+  <div className="overflow-x-auto">
+    <table className="w-full text-white">
+      <thead className="bg-[#111827] border-b border-gray-700">
+        <tr>
+          <th className="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">Rank</th>
+          <th className="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">Team Name</th>
+          <th className="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">Average Score</th>
+          <th className="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">Members</th>
+        </tr>
+      </thead>
+      <tbody className="divide-y divide-gray-700">
+        {teamRankings.map((team, index) => {
+          const rank = index + 1;
+          return (
+            <tr key={team.name} className="hover:bg-[#374151]">
+              <td className="px-6 py-4 whitespace-nowrap">
+                <div className="flex items-center">
+                  <span className="text-lg font-bold text-white mr-2">#{rank}</span>
+                  {rank <= 3 && getBadgeIcon(rank)}
+                </div>
+              </td>
+              <td className="px-6 py-4 whitespace-nowrap">
+                <div className="text-lg font-semibold text-white">{team.name}</div>
+              </td>
+              <td className="px-6 py-4 whitespace-nowrap">
+                <div className="text-lg font-bold text-yellow-300">{team.averageScore}</div>
+              </td>
+              <td className="px-6 py-4 whitespace-nowrap">
+                <div className="text-sm text-gray-300">{team.memberCount} members</div>
+              </td>
+            </tr>
+          );
+        })}
+      </tbody>
+    </table>
+  </div>
+</div>
+
           </>
         )}
       </div>
