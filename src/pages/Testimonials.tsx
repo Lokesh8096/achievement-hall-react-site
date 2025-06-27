@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Navbar from "@/components/Navbar";
 import {
   MessageSquare,
@@ -13,6 +13,11 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 
 const testimonials = [
+  {
+    embedUrl:
+      "https://www.youtube.com/embed/kkFLuxkxrVA?list=TLGGl4cFzafTuWQyNjA2MjAyNQ&autoplay=1",
+    autoplay: true,
+  },
   {
     videoUrl: "https://youtu.be/_omgmUTCvwY?si=TJckWHULOqu-Zq6P",
   },
@@ -35,6 +40,15 @@ function getYoutubeId(url: string) {
 
 const Testimonials = () => {
   const [playing, setPlaying] = useState<number | null>(null);
+
+  useEffect(() => {
+    // Autoplay the first video on mount
+    setPlaying(0);
+  }, []);
+
+  // Separate the first video and the rest
+  const first = testimonials[0];
+  const rest = testimonials.slice(1);
 
   const getSectorIcon = (sector: string) => {
     switch (sector) {
@@ -67,55 +81,65 @@ const Testimonials = () => {
       <Navbar />
 
       {/* Hero Section */}
-      <section className="bg-gradient-to-r from-blue-600 to-purple-600 text-white py-16">
-        <div className="container mx-auto px-4 text-center">
-          <MessageSquare className="h-16 w-16 mx-auto mb-6" />
-          <h1 className="text-4xl md:text-5xl font-bold mb-4">
-            Student Success Stories
-          </h1>
-          <p className="text-xl md:text-2xl mb-8 max-w-3xl mx-auto">
-            Hear from our graduates who have transformed their careers and
-            achieved their dreams
-          </p>
-        </div>
-      </section>
+
 
       {/* Testimonials Grid */}
       <section className="container mx-auto px-4 py-16 bg-[#0f172a] text-white">
+        {/* First video full width */}
+        {first.autoplay && first.embedUrl && (
+          <div className="w-full mb-12">
+            <div className="relative w-full aspect-video overflow-hidden rounded-xl shadow-lg border border-gray-700">
+              <iframe
+                src={first.embedUrl}
+                title="NIAT Club Elections 2024"
+                className="w-full h-full rounded-xl"
+                frameBorder="0"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allowFullScreen
+              />
+            </div>
+          </div>
+        )}
+        {/* Remaining videos in grid */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-          {testimonials.map((testimonial, idx) => {
-            const videoId = getYoutubeId(testimonial.videoUrl);
-            const thumbnail = `https://img.youtube.com/vi/${videoId}/hqdefault.jpg`;
-            return (
-              <div
-                key={testimonial.videoUrl}
-                className="overflow-hidden bg-[#1e293b] text-white rounded-xl shadow-lg hover:shadow-2xl transition-shadow duration-300 border border-gray-700 flex flex-col items-center"
-              >
-                <div className="relative w-full aspect-video cursor-pointer" onClick={() => setPlaying(idx)}>
-                  {playing === idx ? (
-                    <iframe
-                      src={`https://www.youtube.com/embed/${videoId}?autoplay=1`}
-                      title={`Testimonial Video ${idx + 1}`}
-                      className="w-full h-full rounded-t-xl"
-                      frameBorder="0"
-                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                      allowFullScreen
-                    />
-                  ) : (
-                    <>
-                      <img
-                        src={thumbnail}
-                        alt={`Testimonial Video ${idx + 1}`}
-                        className="w-full h-full object-cover rounded-t-xl"
+          {rest.map((testimonial, idx) => {
+            if ("videoUrl" in testimonial) {
+              const videoId = getYoutubeId(testimonial.videoUrl);
+              const thumbnail = `https://img.youtube.com/vi/${videoId}/hqdefault.jpg`;
+              // idx+1 because rest starts from index 1 in the original array
+              const realIdx = idx + 1;
+              return (
+                <div
+                  key={testimonial.videoUrl}
+                  className="overflow-hidden bg-[#1e293b] text-white rounded-xl shadow-lg hover:shadow-2xl transition-shadow duration-300 border border-gray-700 flex flex-col items-center"
+                >
+                  <div className="relative w-full aspect-video cursor-pointer" onClick={() => setPlaying(realIdx)}>
+                    {playing === realIdx ? (
+                      <iframe
+                        src={`https://www.youtube.com/embed/${videoId}?autoplay=1`}
+                        title={`Testimonial Video ${realIdx}`}
+                        className="w-full h-full rounded-t-xl"
+                        frameBorder="0"
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                        allowFullScreen
                       />
-                      <div className="absolute inset-0 flex items-center justify-center bg-black/40">
-                        <Play className="h-16 w-16 text-white opacity-90" />
-                      </div>
-                    </>
-                  )}
+                    ) : (
+                      <>
+                        <img
+                          src={thumbnail}
+                          alt={`Testimonial Video ${realIdx}`}
+                          className="w-full h-full object-cover rounded-t-xl"
+                        />
+                        <div className="absolute inset-0 flex items-center justify-center bg-black/40">
+                          <Play className="h-16 w-16 text-white opacity-90" />
+                        </div>
+                      </>
+                    )}
+                  </div>
                 </div>
-              </div>
-            );
+              );
+            }
+            return null;
           })}
         </div>
         <div className="w-full flex justify-center mt-12">
@@ -171,13 +195,17 @@ const Testimonials = () => {
           comprehensive programs
         </p>
         <div className="space-x-4">
-          <button className="bg-blue-600 text-white px-8 py-3 rounded-lg font-semibold hover:bg-blue-700 transition-colors"
-           onClick={() => {
-            window.location.href = "https://apply.niatindia.com/login?utm_campaign=application&utm_source=hero-apply&utm_medium=website";
-           }}
-          >
-            Enroll Now
-          </button>
+                    <button
+              className="bg-blue-600 text-white px-8 py-3 rounded-lg font-semibold hover:bg-blue-700 transition-colors"
+              onClick={() => {
+                const targetUrl =
+                  "https://apply.niatindia.com/login?utm_campaign=application&utm_source=hero-apply&utm_medium=website" ||
+                  "https://www.niatindia.com/";
+                window.open(targetUrl, "_blank");
+              }}
+            >
+              Enroll Now
+            </button>
           <button className="border border-blue-600 text-blue-600 px-8 py-3 rounded-lg font-semibold hover:bg-blue-50 transition-colors">
             Learn More
           </button>

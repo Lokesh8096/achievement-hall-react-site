@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import Navbar from "@/components/Navbar";
 import { User, Mail, Lock, Eye, EyeOff, LogOut, Shield } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
+import { supabase } from "@/integrations/supabase/client";
 
 const Profile = () => {
   const { user, signUp, signIn, signOut, isAdmin, loading } = useAuth();
@@ -28,6 +29,13 @@ const Profile = () => {
       // Redirect unauthenticated users to login
       navigate("/auth");
     }
+    
+    // Debug environment variables
+    console.log('Environment check:');
+    console.log('VITE_SUPABASE_URL:', import.meta.env.VITE_SUPABASE_URL);
+    console.log('VITE_SUPABASE_ANON_KEY:', import.meta.env.VITE_SUPABASE_ANON_KEY);
+    console.log('Current user:', user);
+    console.log('Loading state:', loading);
   }, [user, loading, navigate]);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -61,29 +69,63 @@ const Profile = () => {
     e.preventDefault();
     setPasswordError("");
     setPasswordSuccess("");
+    
+    // Validate password requirements
+    if (passwordForm.newPassword.length < 6) {
+      setPasswordError("New password must be at least 6 characters long.");
+      return;
+    }
+    
     if (passwordForm.newPassword !== passwordForm.confirmNewPassword) {
       setPasswordError("New passwords do not match.");
       return;
     }
-    if (!passwordForm.currentPassword || !passwordForm.newPassword) {
-      setPasswordError("All fields are required.");
+    
+    if (!passwordForm.newPassword) {
+      setPasswordError("New password is required.");
       return;
     }
+    
+    console.log('Attempting to change password for user:', user?.email);
+    console.log('Supabase client:', supabase);
+    
+    // Test Supabase connection and session
     try {
-      // Supabase requires the user to be logged in; currentPassword is not used by Supabase
-      const { error, data } = await import('@/lib/supabaseClient').then(({ supabase }) =>
-        supabase.auth.updateUser({ password: passwordForm.newPassword })
-      );
-      console.log('Supabase updateUser response:', { error, data });
+      const { data: { session }, error: sessionError } = await supabase.auth.getSession();
+      console.log('Current session:', session);
+      console.log('Session error:', sessionError);
+      
+      if (!session) {
+        setPasswordError("No active session found. Please sign in again.");
+        return;
+      }
+    } catch (sessionErr) {
+      console.error('Session check error:', sessionErr);
+      setPasswordError("Unable to verify session. Please try again.");
+      return;
+    }
+    
+    try {
+      const { error } = await supabase.auth.updateUser({ 
+        password: passwordForm.newPassword 
+      });
+      
+      console.log('Password change response:', { error });
+      
       if (error) {
-        setPasswordError(error.message || JSON.stringify(error) || 'Failed to change password.');
+        console.error('Password change error:', error);
+        setPasswordError(error.message || 'Failed to change password. Please try again.');
       } else {
         setPasswordSuccess('Password changed successfully!');
-        setPasswordForm({ currentPassword: '', newPassword: '', confirmNewPassword: '' });
+        setPasswordForm({ 
+          currentPassword: '', 
+          newPassword: '', 
+          confirmNewPassword: '' 
+        });
       }
     } catch (err) {
-      console.log('Exception in handleChangePassword:', err);
-      setPasswordError('Failed to change password.');
+      console.error('Exception in handleChangePassword:', err);
+      setPasswordError('An unexpected error occurred. Please try again.');
     }
   };
 
@@ -133,36 +175,62 @@ const Profile = () => {
               {/* Change Password Section */}
               <div className="mt-8">
                 <h3 className="text-lg font-semibold mb-4 text-gray-900">Change Password</h3>
+                
+                {/* Debug Test Button */}
+                <button
+                  type="button"
+                  onClick={async () => {
+                    console.log('Testing Supabase connection...');
+                    const { data, error } = await supabase.auth.getSession();
+                    console.log('Session test:', { data, error });
+                    alert(`Session test: ${error ? 'Error: ' + error.message : 'Success - User: ' + data.session?.user?.email}`);
+                  }}
+                  className="w-full mb-4 bg-gray-600 hover:bg-gray-700 text-white py-2 px-4 rounded-lg font-medium transition-colors duration-200"
+                >
+                  Test Connection
+                </button>
+                
                 <form onSubmit={handleChangePassword} className="space-y-4">
-                  <input
-                    type="password"
-                    name="currentPassword"
-                    value={passwordForm.currentPassword}
-                    onChange={handlePasswordInput}
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                    placeholder="Current Password"
-                    required
-                  />
-                  <input
-                    type="password"
-                    name="newPassword"
-                    value={passwordForm.newPassword}
-                    onChange={handlePasswordInput}
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                    placeholder="New Password"
-                    required
-                  />
-                  <input
-                    type="password"
-                    name="confirmNewPassword"
-                    value={passwordForm.confirmNewPassword}
-                    onChange={handlePasswordInput}
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                    placeholder="Confirm New Password"
-                    required
-                  />
-                  {passwordError && <div className="text-red-600 text-sm">{passwordError}</div>}
-                  {passwordSuccess && <div className="text-green-600 text-sm">{passwordSuccess}</div>}
+                  <div>
+                    <label htmlFor="newPassword" className="block text-sm font-medium text-gray-700 mb-2">
+                      New Password
+                    </label>
+                    <input
+                      type="password"
+                      id="newPassword"
+                      name="newPassword"
+                      value={passwordForm.newPassword}
+                      onChange={handlePasswordInput}
+                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                      placeholder="Enter new password (min 6 characters)"
+                      required
+                    />
+                  </div>
+                  <div>
+                    <label htmlFor="confirmNewPassword" className="block text-sm font-medium text-gray-700 mb-2">
+                      Confirm New Password
+                    </label>
+                    <input
+                      type="password"
+                      id="confirmNewPassword"
+                      name="confirmNewPassword"
+                      value={passwordForm.confirmNewPassword}
+                      onChange={handlePasswordInput}
+                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                      placeholder="Confirm new password"
+                      required
+                    />
+                  </div>
+                  {passwordError && (
+                    <div className="text-red-600 text-sm bg-red-50 p-3 rounded-lg border border-red-200">
+                      {passwordError}
+                    </div>
+                  )}
+                  {passwordSuccess && (
+                    <div className="text-green-600 text-sm bg-green-50 p-3 rounded-lg border border-green-200">
+                      {passwordSuccess}
+                    </div>
+                  )}
                   <button
                     type="submit"
                     className="w-full bg-blue-600 hover:bg-blue-700 text-white py-3 px-4 rounded-lg font-medium transition-colors duration-200"

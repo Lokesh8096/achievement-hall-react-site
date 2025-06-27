@@ -79,7 +79,7 @@ const Auth = () => {
                 </Button>
               </form>
               <div className="text-center mt-2">
-                <a href="/ForgotPassword" className="text-blue-600 hover:underline text-sm">Forgot Password?</a>
+                <a href="/forgot-password" className="text-blue-600 hover:underline text-sm">Forgot Password?</a>
               </div>
             </TabsContent>
             
