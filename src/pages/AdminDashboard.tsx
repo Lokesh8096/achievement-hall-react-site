@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { useAuth } from "@/hooks/useAuth";
 import { useStudents } from "@/hooks/useStudents";
 import Navbar from "@/components/Navbar";
@@ -39,7 +39,7 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
-import { Trash2, Plus, Upload, Download, Edit } from "lucide-react";
+import { Trash2, Plus, Upload, Download, Edit, FileText } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
 const AdminDashboard = () => {
@@ -56,6 +56,10 @@ const AdminDashboard = () => {
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
   const [selectedStudents, setSelectedStudents] = useState<string[]>([]);
   const [editingStudent, setEditingStudent] = useState<any>(null);
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [isDragOver, setIsDragOver] = useState(false);
+  const [isUploading, setIsUploading] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const [newStudent, setNewStudent] = useState({
     name: "",
@@ -128,14 +132,71 @@ const AdminDashboard = () => {
     window.URL.revokeObjectURL(url);
   };
 
-  const handleCSVUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileSelect = (file: File) => {
+    if (file.type === "text/csv" || file.name.endsWith('.csv')) {
+      setSelectedFile(file);
+      toast({
+        title: "File Selected",
+        description: `${file.name} has been selected for upload.`,
+      });
+    } else {
+      toast({
+        title: "Invalid File Type",
+        description: "Please select a CSV file.",
+        variant: "destructive",
+      });
+    }
+  };
+
+  const handleFileInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
+      handleFileSelect(file);
+    }
+  };
+
+  const handleDragOver = (e: React.DragEvent) => {
+    e.preventDefault();
+    setIsDragOver(true);
+  };
+
+  const handleDragLeave = (e: React.DragEvent) => {
+    e.preventDefault();
+    setIsDragOver(false);
+  };
+
+  const handleDrop = (e: React.DragEvent) => {
+    e.preventDefault();
+    setIsDragOver(false);
+    
+    const files = Array.from(e.dataTransfer.files);
+    if (files.length > 0) {
+      handleFileSelect(files[0]);
+    }
+  };
+
+  const handleUploadCSV = async () => {
+    if (!selectedFile) {
+      toast({
+        title: "No File Selected",
+        description: "Please select a CSV file to upload.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    setIsUploading(true);
+    try {
       const reader = new FileReader();
       reader.onload = async (event) => {
         const csv = event.target?.result as string;
         const lines = csv.split("\n");
         const headers = lines[0].split(",");
+
+        let successCount = 0;
+        let duplicateCount = 0;
+        let errorCount = 0;
+        const duplicateStudents: string[] = [];
 
         for (let i = 1; i < lines.length; i++) {
           const values = lines[i].split(",");
@@ -147,15 +208,64 @@ const AdminDashboard = () => {
               team_name: values[3],
               project_link: values[4],
             };
-            await addStudent(studentData);
+            const result = await addStudent(studentData);
+            if (result.error === null) {
+              successCount++;
+            } else if (result.error?.message === 'Duplicate student') {
+              duplicateCount++;
+              duplicateStudents.push(`${studentData.name} (${studentData.team_name})`);
+            } else {
+              errorCount++;
+            }
           }
         }
+
+        setIsUploading(false);
+        setSelectedFile(null);
+        if (fileInputRef.current) {
+          fileInputRef.current.value = '';
+        }
+
+        // Show detailed results
+        let description = `Successfully imported ${successCount} students`;
+        if (duplicateCount > 0) {
+          description += `, ${duplicateCount} duplicates skipped`;
+        }
+        if (errorCount > 0) {
+          description += `, ${errorCount} errors`;
+        }
+
         toast({
           title: "CSV Upload Complete",
-          description: "Students have been imported successfully.",
+          description: description,
         });
+
+        // If there were duplicates, show them in a separate toast
+        if (duplicateCount > 0) {
+          setTimeout(() => {
+            toast({
+              title: "Duplicates Found",
+              description: `Skipped duplicates: ${duplicateStudents.slice(0, 3).join(', ')}${duplicateStudents.length > 3 ? ` and ${duplicateStudents.length - 3} more` : ''}`,
+              variant: "default",
+            });
+          }, 1000);
+        }
       };
-      reader.readAsText(file);
+      reader.readAsText(selectedFile);
+    } catch (error) {
+      setIsUploading(false);
+      toast({
+        title: "Upload Error",
+        description: "An error occurred while processing the CSV file.",
+        variant: "destructive",
+      });
+    }
+  };
+
+  const clearSelectedFile = () => {
+    setSelectedFile(null);
+    if (fileInputRef.current) {
+      fileInputRef.current.value = '';
     }
   };
 
@@ -275,20 +385,92 @@ const AdminDashboard = () => {
               <CardTitle className="text-sm font-medium">CSV Upload</CardTitle>
             </CardHeader>
             <CardContent>
-              <Input
+              {/* Drag and Drop Area */}
+              <div
+                className={`border-2 border-dashed rounded-lg p-6 text-center transition-colors ${
+                  isDragOver
+                    ? "border-blue-500 bg-blue-50"
+                    : "border-gray-300 hover:border-gray-400"
+                }`}
+                onDragOver={handleDragOver}
+                onDragLeave={handleDragLeave}
+                onDrop={handleDrop}
+              >
+                {selectedFile ? (
+                  <div className="space-y-2">
+                    <FileText className="h-8 w-8 mx-auto text-green-600" />
+                    <p className="text-sm font-medium text-gray-900">
+                      {selectedFile.name}
+                    </p>
+                    <p className="text-xs text-gray-500">
+                      {(selectedFile.size / 1024).toFixed(1)} KB
+                    </p>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={clearSelectedFile}
+                      className="mt-2"
+                    >
+                      Remove File
+                    </Button>
+                  </div>
+                ) : (
+                  <div className="space-y-2">
+                    <Upload className="h-8 w-8 mx-auto text-gray-400" />
+                    <p className="text-sm font-medium text-gray-900">
+                      Drop CSV file here
+                    </p>
+                    <p className="text-xs text-gray-500">
+                      or click to browse files
+                    </p>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => fileInputRef.current?.click()}
+                      className="mt-2"
+                    >
+                      Choose File
+                    </Button>
+                  </div>
+                )}
+              </div>
+
+              {/* Hidden file input */}
+              <input
+                ref={fileInputRef}
                 type="file"
                 accept=".csv"
-                onChange={handleCSVUpload}
-                className="mb-2"
+                onChange={handleFileInputChange}
+                className="hidden"
               />
+
+              {/* Upload Button */}
+              <Button
+                onClick={handleUploadCSV}
+                disabled={!selectedFile || isUploading}
+                className="w-full mt-3"
+              >
+                {isUploading ? (
+                  <>
+                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
+                    Uploading...
+                  </>
+                ) : (
+                  <>
+                    <Upload className="h-4 w-4 mr-2" />
+                    Upload CSV
+                  </>
+                )}
+              </Button>
+
               <Button
                 variant="outline"
                 size="sm"
                 onClick={downloadCSVTemplate}
-                className="w-full"
+                className="w-full mt-2"
               >
                 <Download className="h-4 w-4 mr-2" />
-                Template
+                Download Template
               </Button>
             </CardContent>
           </Card>
@@ -457,3 +639,4 @@ const AdminDashboard = () => {
 };
 
 export default AdminDashboard;
+

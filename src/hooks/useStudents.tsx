@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
@@ -42,13 +41,54 @@ export const useStudents = () => {
 
   const addStudent = async (studentData: Omit<Student, 'id' | 'created_at' | 'updated_at'>) => {
     try {
+      // Clean the input data
+      const cleanName = studentData.name.trim();
+      const cleanTeamName = studentData.team_name.trim();
+      
+      console.log('Checking for duplicate:', cleanName, cleanTeamName);
+      
+      // Check for existing student with same name and team (case-insensitive)
+      const { data: existingStudents, error: checkError } = await supabase
+        .from('students')
+        .select('*')
+        .ilike('name', cleanName)
+        .ilike('team_name', cleanTeamName);
+
+      if (checkError) {
+        console.error('Error checking for duplicates:', checkError);
+        throw checkError;
+      }
+
+      console.log('Existing students found:', existingStudents);
+
+      // If student with same name and team already exists
+      if (existingStudents && existingStudents.length > 0) {
+        console.log('Duplicate found, skipping:', cleanName, cleanTeamName);
+        toast({
+          title: "Duplicate Student",
+          description: `A student named "${cleanName}" already exists in team "${cleanTeamName}".`,
+          variant: "destructive",
+        });
+        return { data: null, error: new Error('Duplicate student') };
+      }
+
+      console.log('No duplicate found, adding student:', cleanName, cleanTeamName);
+
+      // Insert new student if no duplicate found (use cleaned data)
       const { data, error } = await supabase
         .from('students')
-        .insert([studentData])
+        .insert([{
+          ...studentData,
+          name: cleanName,
+          team_name: cleanTeamName
+        }])
         .select()
         .single();
 
-      if (error) throw error;
+      if (error) {
+        console.error('Error inserting student:', error);
+        throw error;
+      }
       
       setStudents(prev => [...prev, data]);
       toast({
@@ -58,11 +98,14 @@ export const useStudents = () => {
       
       return { data, error: null };
     } catch (error: any) {
-      toast({
-        title: "Error adding student",
-        description: error.message,
-        variant: "destructive",
-      });
+      if (error.message !== 'Duplicate student') {
+        console.error('Unexpected error:', error);
+        toast({
+          title: "Error adding student",
+          description: error.message,
+          variant: "destructive",
+        });
+      }
       return { data: null, error };
     }
   };

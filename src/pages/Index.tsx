@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Navbar from "@/components/Navbar";
 import ImageCarousel from "@/components/ImageCarousel";
 import StudentCard from "@/components/StudentCard";
@@ -10,7 +10,7 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { Button } from "@/components/ui/button";
-import { ChevronDown } from "lucide-react"; // optional for dropdown arrow
+import { ChevronDown, Loader2 } from "lucide-react"; // optional for dropdown arrow
 
 import {
   Select,
@@ -26,6 +26,7 @@ const Index = () => {
   const [open, setOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedTeam, setSelectedTeam] = useState("All");
+  const [displayCount, setDisplayCount] = useState(20);
 
   const uniqueTeams = [...new Set(students.map((s) => s.team_name))];
 
@@ -35,9 +36,22 @@ const Index = () => {
     return matchesName && matchesTeam;
   });
 
+  // Reset display count when filters change
+  useEffect(() => {
+    setDisplayCount(20);
+  }, [searchTerm, selectedTeam]);
+
+  const displayedStudents = filteredStudents.slice(0, displayCount);
+  const hasMoreStudents = displayCount < filteredStudents.length;
+
+  const loadMore = () => {
+    setDisplayCount(prev => Math.min(prev + 20, filteredStudents.length));
+  };
+
   const resetFilters = () => {
     setSearchTerm("");
     setSelectedTeam("All");
+    setDisplayCount(20);
   };
 
   return (
@@ -143,19 +157,38 @@ const Index = () => {
             ))}
           </div>
         ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
-            {filteredStudents.length > 0 ? (
-              filteredStudents.map((student) => (
-                <StudentCard key={student.id} student={student} />
-              ))
-            ) : (
-              <div className="text-white col-span-full text-center text-xl">
-                No students found.
-              </div>
-            )}
-          </div>
+          <>
+           
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+              {displayedStudents.length > 0 ? (
+                displayedStudents.map((student) => (
+                  <StudentCard key={student.id} student={student} />
+                ))
+              ) : (
+                <div className="text-white col-span-full text-center text-xl">
+                  No students found.
+                </div>
+              )}
+            </div>
+          </>
         )}
       </section>
+
+      {/* Load More Button */}
+      {!loading && hasMoreStudents && (
+        <section className="container mx-auto px-4 py-6 text-center">
+          <div className="space-y-4">
+            <Button
+              onClick={loadMore}
+              variant="outline"
+              className="px-8 py-3 text-blue-400 border-gray-600 hover:bg-blue-900 hover:text-white transition-colors"
+            >
+              Load More Students
+            </Button>
+          </div>
+        </section>
+      )}
 
       {/* Statistics Section */}
       {!loading && (
