@@ -61,7 +61,7 @@ const StudentCard = ({ student }: StudentCardProps) => {
 
           {/* Hackathon Count */}
           <div className="flex items-center space-x-2">
-            <span className="text-sm text-white-400">Hackathon-{student.hackathon_count}</span>
+            <span className="text-sm text-black-400">Hackathon-{student.hackathon_count}</span>
           </div>
         </div>
       </div>
