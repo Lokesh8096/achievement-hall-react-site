@@ -6,6 +6,7 @@ CREATE TABLE public.students (
   score INTEGER NOT NULL CHECK (score >= 0 AND score <= 100),
   team_name TEXT NOT NULL,
   project_link TEXT,
+  hackathon_count INTEGER NOT NULL DEFAULT 1 CHECK (hackathon_count >= 1),
   created_at TIMESTAMP WITH TIME ZONE DEFAULT TIMEZONE('utc'::text, NOW()) NOT NULL,
   updated_at TIMESTAMP WITH TIME ZONE DEFAULT TIMEZONE('utc'::text, NOW()) NOT NULL
 );
@@ -124,10 +125,10 @@ CREATE TRIGGER on_auth_user_created
   FOR EACH ROW EXECUTE PROCEDURE public.handle_new_user();
 
 -- Insert sample students data
-INSERT INTO public.students (name, image_url, score, team_name, project_link) VALUES
-('John Doe', 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&h=150&fit=crop&crop=face', 85, 'Team Alpha', 'https://example.com/project1'),
-('Jane Smith', 'https://images.unsplash.com/photo-1494790108755-2616b612b786?w=150&h=150&fit=crop&crop=face', 92, 'Team Beta', 'https://example.com/project2'),
-('Mike Johnson', 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&h=150&fit=crop&crop=face', 78, 'Team Alpha', 'https://example.com/project3'),
-('Sarah Wilson', 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=150&h=150&fit=crop&crop=face', 96, 'Team Gamma', 'https://example.com/project4'),
-('David Brown', 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=150&h=150&fit=crop&crop=face', 89, 'Team Beta', 'https://example.com/project5'),
-('Lisa Garcia', 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&h=150&fit=crop&crop=face', 94, 'Team Gamma', 'https://example.com/project6');
+INSERT INTO public.students (name, image_url, score, team_name, project_link, hackathon_count) VALUES
+('John Doe', 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&h=150&fit=crop&crop=face', 85, 'Team Alpha', 'https://example.com/project1', 1),
+('Jane Smith', 'https://images.unsplash.com/photo-1494790108755-2616b612b786?w=150&h=150&fit=crop&crop=face', 92, 'Team Beta', 'https://example.com/project2', 2),
+('Mike Johnson', 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&h=150&fit=crop&crop=face', 78, 'Team Alpha', 'https://example.com/project3', 1),
+('Sarah Wilson', 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=150&h=150&fit=crop&crop=face', 96, 'Team Gamma', 'https://example.com/project4', 3),
+('David Brown', 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=150&h=150&fit=crop&crop=face', 89, 'Team Beta', 'https://example.com/project5', 2),
+('Lisa Garcia', 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&h=150&fit=crop&crop=face', 94, 'Team Gamma', 'https://example.com/project6', 1);

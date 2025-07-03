@@ -8,6 +8,7 @@ interface Student {
   score: number;
   team_name: string;
   project_link: string;
+  hackathon_count: number;
 }
 
 interface StudentCardProps {
@@ -56,6 +57,11 @@ const StudentCard = ({ student }: StudentCardProps) => {
               {student.team_name}
             </span>
             <ExternalLink className="h-4 w-4 text-gray-400 transition-colors duration-300 group-hover:text-red-600" />
+          </div>
+
+          {/* Hackathon Count */}
+          <div className="flex items-center space-x-2">
+            <span className="text-sm text-gray-400">Hackathon-{student.hackathon_count}</span>
           </div>
         </div>
       </div>

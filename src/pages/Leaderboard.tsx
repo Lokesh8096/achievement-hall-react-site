@@ -2,14 +2,20 @@ import Navbar from "@/components/Navbar";
 import { useStudents } from "@/hooks/useStudents";
 import { Trophy, Medal, Award } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
+import { useState } from "react";
 
 const Leaderboard = () => {
   const { students, loading } = useStudents();
+  const [selectedHackathon, setSelectedHackathon] = useState('All');
+
+  const filteredStudents = selectedHackathon === 'All'
+    ? students
+    : students.filter(s => s.hackathon_count === Number(selectedHackathon));
 
   const getTeamRankings = () => {
     const teamMap = new Map();
     
-    students.forEach(student => {
+    filteredStudents.forEach(student => {
       if (teamMap.has(student.team_name)) {
         const team = teamMap.get(student.team_name);
         team.totalScore += student.score;
@@ -67,6 +73,19 @@ const Leaderboard = () => {
         <div className="text-center mb-12">
           <h1 className="text-4xl font-bold text-gray-900 mb-4 text-white">Team Leaderboard</h1>
           <p className="text-lg text-gray-600 text-white">Rankings based on team average scores</p>
+          {/* Hackathon Filter Dropdown */}
+          <div className="mt-6 flex justify-center">
+            <select
+              value={selectedHackathon}
+              onChange={e => setSelectedHackathon(e.target.value)}
+              className="px-4 py-2 rounded-md bg-[#1e293b] text-white border border-gray-600 w-64 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+            >
+              <option value="All">All Hackathons</option>
+              {[1,2].map(count => (
+                <option key={count} value={count}>{`Hackathon-${count}`}</option>
+              ))}
+            </select>
+          </div>
         </div>
 
         {loading ? (

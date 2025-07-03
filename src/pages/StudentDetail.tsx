@@ -11,6 +11,7 @@ interface Student {
   score: number;
   team_name: string;
   project_link: string;
+  hackathon_count: number;
 }
 
 const StudentDetail = () => {
@@ -31,7 +32,11 @@ const StudentDetail = () => {
           .single();
 
         if (error) throw error;
-        setStudent(data);
+        const studentData = data as Partial<Student>;
+        setStudent({
+          ...studentData,
+          hackathon_count: studentData.hackathon_count ?? 1
+        } as Student);
       } catch (error) {
         console.error("Error fetching student:", error);
         setStudent(null);
@@ -94,6 +99,12 @@ const StudentDetail = () => {
     );
   }
 
+  const getValidProjectLink = (url: string) => {
+    if (!url) return '#';
+    if (url.startsWith('http://') || url.startsWith('https://')) return url;
+    return 'https://' + url;
+  };
+
   return (
     <div className="min-h-screen bg-[#0f172a] text-white pt-16">
       <Navbar />
@@ -135,6 +146,11 @@ const StudentDetail = () => {
                       <Trophy className="h-5 w-5" />
                       <span className="font-medium">
                         Score: {student.score}
+                      </span>
+                    </div>
+                    <div className="flex items-center space-x-1">
+                      <span className="font-medium">
+                        Hackathon Count: Hackathon-{student.hackathon_count}
                       </span>
                     </div>
                   </div>
@@ -179,7 +195,7 @@ const StudentDetail = () => {
 
               {/* Project Link */}
               <a
-                href={student.project_link}
+                href={getValidProjectLink(student.project_link)}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="inline-flex items-center space-x-2 bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg font-medium transition-colors duration-200"

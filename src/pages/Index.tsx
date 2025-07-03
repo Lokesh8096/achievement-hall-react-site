@@ -27,19 +27,21 @@ const Index = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedTeam, setSelectedTeam] = useState("All");
   const [displayCount, setDisplayCount] = useState(20);
+  const [selectedHackathon, setSelectedHackathon] = useState('All');
 
   const uniqueTeams = [...new Set(students.map((s) => s.team_name))];
 
   const filteredStudents = students.filter((student) => {
     const matchesName = student.name.toLowerCase().includes(searchTerm.toLowerCase());
     const matchesTeam = selectedTeam === "All" || student.team_name === selectedTeam;
-    return matchesName && matchesTeam;
+    const matchesHackathon = selectedHackathon === 'All' || student.hackathon_count === Number(selectedHackathon);
+    return matchesName && matchesTeam && matchesHackathon;
   });
 
   // Reset display count when filters change
   useEffect(() => {
     setDisplayCount(20);
-  }, [searchTerm, selectedTeam]);
+  }, [searchTerm, selectedTeam, selectedHackathon]);
 
   const displayedStudents = filteredStudents.slice(0, displayCount);
   const hasMoreStudents = displayCount < filteredStudents.length;
@@ -51,6 +53,7 @@ const Index = () => {
   const resetFilters = () => {
     setSearchTerm("");
     setSelectedTeam("All");
+    setSelectedHackathon('All');
     setDisplayCount(20);
   };
 
@@ -114,7 +117,17 @@ const Index = () => {
   </PopoverContent>
 </Popover>
 
-
+            {/* Hackathon Dropdown */}
+            <select
+              value={selectedHackathon}
+              onChange={e => setSelectedHackathon(e.target.value)}
+              className="px-4 py-2 rounded-md bg-[#1e293b] text-white border border-gray-600 w-64 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+            >
+              <option value="All">All Hackathons</option>
+              {[1,2].map(count => (
+                <option key={count} value={count}>{`Hackathon-${count}`}</option>
+              ))}
+            </select>
 
             {/* Search Input */}
             <input

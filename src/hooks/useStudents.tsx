@@ -9,6 +9,7 @@ interface Student {
   score: number;
   team_name: string;
   project_link: string;
+  hackathon_count: number;
   created_at: string;
   updated_at: string;
 }
@@ -80,7 +81,8 @@ export const useStudents = () => {
         .insert([{
           ...studentData,
           name: cleanName,
-          team_name: cleanTeamName
+          team_name: cleanTeamName,
+          hackathon_count: studentData.hackathon_count
         }])
         .select()
         .single();

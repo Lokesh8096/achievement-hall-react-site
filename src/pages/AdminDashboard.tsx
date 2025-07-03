@@ -67,6 +67,7 @@ const AdminDashboard = () => {
     score: 0,
     team_name: "",
     project_link: "",
+    hackathon_count: 1,
   });
 
   if (!user || !isAdmin) {
@@ -93,6 +94,7 @@ const AdminDashboard = () => {
         score: 0,
         team_name: "",
         project_link: "",
+        hackathon_count: 1,
       });
       setIsAddDialogOpen(false);
     }
@@ -122,7 +124,7 @@ const AdminDashboard = () => {
   };
 
   const downloadCSVTemplate = () => {
-    const csvContent = "name,image_url,score,team_name,project_link\n";
+    const csvContent = "name,image_url,score,team_name,project_link,hackathon_count\n";
     const blob = new Blob([csvContent], { type: "text/csv" });
     const url = window.URL.createObjectURL(blob);
     const a = document.createElement("a");
@@ -207,6 +209,7 @@ const AdminDashboard = () => {
               score: parseInt(values[2]) || 0,
               team_name: values[3],
               project_link: values[4],
+              hackathon_count: parseInt(values[5]) || 1,
             };
             const result = await addStudent(studentData);
             if (result.error === null) {
@@ -370,6 +373,20 @@ const AdminDashboard = () => {
                           })
                         }
                       />
+                    </div>
+                    <div>
+                      <Label htmlFor="hackathon_count">Hackathon Count</Label>
+                      <select
+                        id="hackathon_count"
+                        value={newStudent.hackathon_count}
+                        onChange={e => setNewStudent({ ...newStudent, hackathon_count: parseInt(e.target.value) })}
+                        className="w-full px-3 py-2 rounded border border-gray-300 text-black"
+                        required
+                      >
+                        {[1,2].map(count => (
+                          <option key={count} value={count}>{`Hackathon-${count}`}</option>
+                        ))}
+                      </select>
                     </div>
                     <Button type="submit" className="w-full">
                       Add Student
