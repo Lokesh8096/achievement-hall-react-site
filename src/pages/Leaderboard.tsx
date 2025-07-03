@@ -134,10 +134,10 @@ const Leaderboard = () => {
     <table className="w-full text-white">
       <thead className="bg-[#111827] border-b border-gray-700">
         <tr>
-          <th className="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">Rank</th>
-          <th className="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">Team Name</th>
-          <th className="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">Average Score</th>
-          <th className="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">Members</th>
+          <th className="px-6 py-3 text-left text-xs font-medium text-white-400 uppercase tracking-wider">Rank</th>
+          <th className="px-6 py-3 text-left text-xs font-medium text-white-400 uppercase tracking-wider">Team Name</th>
+          <th className="px-6 py-3 text-left text-xs font-medium text-white-400 uppercase tracking-wider">Average Score</th>
+          <th className="px-6 py-3 text-left text-xs font-medium text-white-400 uppercase tracking-wider">Members</th>
         </tr>
       </thead>
       <tbody className="divide-y divide-gray-700">

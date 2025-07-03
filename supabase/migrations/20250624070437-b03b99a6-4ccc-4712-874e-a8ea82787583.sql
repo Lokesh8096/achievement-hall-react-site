@@ -1,4 +1,3 @@
-
 -- Create students table
 CREATE TABLE public.students (
   id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
@@ -14,11 +13,14 @@ CREATE TABLE public.students (
 -- Create profiles table for additional user information
 CREATE TABLE public.profiles (
   id UUID REFERENCES auth.users ON DELETE CASCADE PRIMARY KEY,
-  email TEXT NOT NULL,
+  email TEXT NOT NULL UNIQUE,
   role TEXT NOT NULL DEFAULT 'user' CHECK (role IN ('user', 'admin')),
   created_at TIMESTAMP WITH TIME ZONE DEFAULT TIMEZONE('utc'::text, NOW()) NOT NULL,
   updated_at TIMESTAMP WITH TIME ZONE DEFAULT TIMEZONE('utc'::text, NOW()) NOT NULL
 );
+
+-- Create index on email for faster lookups
+CREATE INDEX idx_profiles_email ON public.profiles(email);
 
 -- Enable Row Level Security
 ALTER TABLE public.students ENABLE ROW LEVEL SECURITY;
@@ -55,23 +57,64 @@ FOR DELETE USING (
 CREATE POLICY "Users can view their own profile" ON public.profiles 
 FOR SELECT USING (auth.uid() = id);
 
+-- Allow checking for existing users by email during signup (for unauthenticated users)
+CREATE POLICY "Check existing users by email" ON public.profiles 
+FOR SELECT USING (
+  -- Allow if user is checking their own email or if no user is authenticated (signup flow)
+  auth.uid() = id OR auth.uid() IS NULL
+);
+
 CREATE POLICY "Users can update their own profile" ON public.profiles 
 FOR UPDATE USING (auth.uid() = id);
 
--- Create function to handle new user registration
+-- Create function to check if user exists by email
+CREATE OR REPLACE FUNCTION public.check_user_exists(user_email TEXT)
+RETURNS BOOLEAN AS $$
+BEGIN
+  RETURN EXISTS (
+    SELECT 1 FROM public.profiles 
+    WHERE email = user_email
+  );
+END;
+$$ LANGUAGE plpgsql SECURITY DEFINER;
+
+-- Create function to handle new user registration with improved duplicate handling
 CREATE OR REPLACE FUNCTION public.handle_new_user()
 RETURNS trigger AS $$
 BEGIN
-  INSERT INTO public.profiles (id, email, role)
-  VALUES (
-    new.id,
-    new.email,
-    CASE 
-      WHEN new.email = 'krovvidi.lokesh@nxtwave.co.in' THEN 'admin'
-      ELSE 'user'
-    END
-  );
+  -- Check if a profile already exists for this email
+  IF EXISTS (SELECT 1 FROM public.profiles WHERE email = new.email) THEN
+    -- If profile exists, this is a duplicate signup attempt
+    -- Don't create or update anything, just log it
+    RAISE NOTICE 'Duplicate signup attempt for email: %', new.email;
+    
+    -- Return NULL to prevent the user from being created
+    RETURN NULL;
+  ELSE
+    -- If no profile exists, create a new one
+    INSERT INTO public.profiles (id, email, role)
+    VALUES (
+      new.id,
+      new.email,
+      CASE 
+        WHEN new.email = 'krovvidi.lokesh@nxtwave.co.in' THEN 'admin'
+        ELSE 'user'
+      END
+    );
+    
+    -- Log the new user creation
+    RAISE NOTICE 'Created new profile for email: %', new.email;
+  END IF;
   RETURN new;
+EXCEPTION
+  WHEN unique_violation THEN
+    -- Handle unique constraint violation
+    RAISE NOTICE 'Unique constraint violation for email: %', new.email;
+    RETURN NULL;
+  WHEN OTHERS THEN
+    -- Handle any other errors
+    RAISE NOTICE 'Error in handle_new_user: %', SQLERRM;
+    RETURN NULL;
 END;
 $$ LANGUAGE plpgsql SECURITY DEFINER;
 

@@ -178,21 +178,6 @@ const Profile = () => {
               {/* Change Password Section */}
               <div className="mt-8">
                 <h3 className="text-lg font-semibold mb-4 text-gray-900">Change Password</h3>
-                
-                {/* Debug Test Button */}
-                <button
-                  type="button"
-                  onClick={async () => {
-                    console.log('Testing Supabase connection...');
-                    const { data, error } = await supabase.auth.getSession();
-                    console.log('Session test:', { data, error });
-                    alert(`Session test: ${error ? 'Error: ' + error.message : 'Success - User: ' + data.session?.user?.email}`);
-                  }}
-                  className="w-full mb-4 bg-gray-600 hover:bg-gray-700 text-white py-2 px-4 rounded-lg font-medium transition-colors duration-200"
-                >
-                  Test Connection
-                </button>
-                
                 <form onSubmit={handleChangePassword} className="space-y-4">
                   <div>
                     <label htmlFor="newPassword" className="block text-sm font-medium text-gray-700 mb-2">
