@@ -383,9 +383,8 @@ const AdminDashboard = () => {
                         className="w-full px-3 py-2 rounded border border-gray-300 text-black"
                         required
                       >
-                        {[1,2].map(count => (
-                          <option key={count} value={count}>{`Hackathon-${count}`}</option>
-                        ))}
+                        <option value={1}>Hackathon-1</option>
+                        <option value={2}>Build-for-Telangana</option>
                       </select>
                     </div>
                     <Button type="submit" className="w-full">

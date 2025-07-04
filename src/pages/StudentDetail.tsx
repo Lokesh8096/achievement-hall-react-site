@@ -32,11 +32,10 @@ const StudentDetail = () => {
           .single();
 
         if (error) throw error;
-        const studentData = data as Partial<Student>;
         setStudent({
-          ...studentData,
-          hackathon_count: studentData.hackathon_count ?? 1
-        } as Student);
+          ...(data as any),
+          hackathon_count: (data as any).hackathon_count ?? 1
+        });
       } catch (error) {
         console.error("Error fetching student:", error);
         setStudent(null);
@@ -99,12 +98,6 @@ const StudentDetail = () => {
     );
   }
 
-  const getValidProjectLink = (url: string) => {
-    if (!url) return '#';
-    if (url.startsWith('http://') || url.startsWith('https://')) return url;
-    return 'https://' + url;
-  };
-
   return (
     <div className="min-h-screen bg-[#0f172a] text-white pt-16">
       <Navbar />
@@ -150,7 +143,7 @@ const StudentDetail = () => {
                     </div>
                     <div className="flex items-center space-x-1">
                       <span className="font-medium">
-                        Hackathon Count: Hackathon-{student.hackathon_count}
+                        {student.hackathon_count === 2 ? 'Build-for-Telangana' : `Hackathon-${student.hackathon_count}`}
                       </span>
                     </div>
                   </div>
@@ -195,7 +188,7 @@ const StudentDetail = () => {
 
               {/* Project Link */}
               <a
-                href={getValidProjectLink(student.project_link)}
+                href={student.project_link}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="inline-flex items-center space-x-2 bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg font-medium transition-colors duration-200"
