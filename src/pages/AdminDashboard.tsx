@@ -41,6 +41,7 @@ import {
 } from "@/components/ui/alert-dialog";
 import { Trash2, Plus, Upload, Download, Edit, FileText } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { getHackathonOptions, getHackathonName } from "@/lib/hackathons";
 
 const AdminDashboard = () => {
   const { user, isAdmin } = useAuth();
@@ -68,6 +69,7 @@ const AdminDashboard = () => {
     team_name: "",
     project_link: "",
     hackathon_count: 1,
+    college: "",
   });
 
   if (!user || !isAdmin) {
@@ -95,6 +97,7 @@ const AdminDashboard = () => {
         team_name: "",
         project_link: "",
         hackathon_count: 1,
+        college: "",
       });
       setIsAddDialogOpen(false);
     }
@@ -124,7 +127,7 @@ const AdminDashboard = () => {
   };
 
   const downloadCSVTemplate = () => {
-    const csvContent = "name,image_url,score,team_name,project_link,hackathon_count\n";
+    const csvContent = "name,image_url,score,team_name,project_link,hackathon_count,college\n";
     const blob = new Blob([csvContent], { type: "text/csv" });
     const url = window.URL.createObjectURL(blob);
     const a = document.createElement("a");
@@ -202,15 +205,19 @@ const AdminDashboard = () => {
 
         for (let i = 1; i < lines.length; i++) {
           const values = lines[i].split(",");
-          if (values.length === headers.length && values[0]) {
-            const studentData = {
+          if (values.length >= 6 && values[0]) {
+            const studentData: any = {
               name: values[0],
-              image_url: values[1],
+              image_url: values[1] || "",
               score: parseInt(values[2]) || 0,
               team_name: values[3],
-              project_link: values[4],
+              project_link: values[4] || "",
               hackathon_count: parseInt(values[5]) || 1,
             };
+            // Add college if it exists in CSV (column 7 or index 6)
+            if (values.length > 6 && values[6]) {
+              studentData.college = values[6].trim() || null;
+            }
             const result = await addStudent(studentData);
             if (result.error === null) {
               successCount++;
@@ -375,7 +382,7 @@ const AdminDashboard = () => {
                       />
                     </div>
                     <div>
-                      <Label htmlFor="hackathon_count">Hackathon Count</Label>
+                      <Label htmlFor="hackathon_count">Hackathon</Label>
                       <select
                         id="hackathon_count"
                         value={newStudent.hackathon_count}
@@ -383,9 +390,26 @@ const AdminDashboard = () => {
                         className="w-full px-3 py-2 rounded border border-gray-300 text-black"
                         required
                       >
-                        <option value={1}>Hackathon-1</option>
-                        <option value={2}>Build-for-Telangana</option>
+                        {getHackathonOptions().map(option => (
+                          <option key={option.value} value={option.value}>
+                            {option.label}
+                          </option>
+                        ))}
                       </select>
+                    </div>
+                    <div>
+                      <Label htmlFor="college">College (Optional)</Label>
+                      <Input
+                        id="college"
+                        value={newStudent.college}
+                        onChange={(e) =>
+                          setNewStudent({
+                            ...newStudent,
+                            college: e.target.value,
+                          })
+                        }
+                        placeholder="Enter college name"
+                      />
                     </div>
                     <Button type="submit" className="w-full">
                       Add Student
@@ -589,6 +613,8 @@ const AdminDashboard = () => {
                     <TableHead>Name</TableHead>
                     <TableHead>Team</TableHead>
                     <TableHead>Score</TableHead>
+                    <TableHead>Hackathon</TableHead>
+                    <TableHead>College</TableHead>
                     <TableHead>Actions</TableHead>
                   </TableRow>
                 </TableHeader>
@@ -609,6 +635,8 @@ const AdminDashboard = () => {
                       </TableCell>
                       <TableCell>{student.team_name}</TableCell>
                       <TableCell>{student.score}</TableCell>
+                      <TableCell>{getHackathonName(student.hackathon_count)}</TableCell>
+                      <TableCell>{student.college || "-"}</TableCell>
                       <TableCell>
                         <div className="flex space-x-2">
                           <Button variant="outline" size="sm">

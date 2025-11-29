@@ -2,15 +2,45 @@ import Navbar from "@/components/Navbar";
 import { useStudents } from "@/hooks/useStudents";
 import { Trophy, Medal, Award } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
-import { useState } from "react";
+import { useState, useMemo } from "react";
+import { getHackathonOptions, getHackathonName } from "@/lib/hackathons";
 
 const Leaderboard = () => {
   const { students, loading } = useStudents();
   const [selectedHackathon, setSelectedHackathon] = useState('All');
+  const [selectedCollege, setSelectedCollege] = useState('All');
 
-  const filteredStudents = selectedHackathon === 'All'
-    ? students
-    : students.filter(s => s.hackathon_count === Number(selectedHackathon));
+  // Get unique colleges for the selected hackathon
+  const availableColleges = useMemo(() => {
+    const hackathonFiltered = selectedHackathon === 'All'
+      ? students
+      : students.filter(s => s.hackathon_count === Number(selectedHackathon));
+    
+    const colleges = new Set<string>();
+    hackathonFiltered.forEach(s => {
+      if (s.college) {
+        colleges.add(s.college);
+      }
+    });
+    return Array.from(colleges).sort();
+  }, [students, selectedHackathon]);
+
+  // Filter students by hackathon and college
+  const filteredStudents = useMemo(() => {
+    let filtered = students;
+    
+    // Filter by hackathon
+    if (selectedHackathon !== 'All') {
+      filtered = filtered.filter(s => s.hackathon_count === Number(selectedHackathon));
+    }
+    
+    // Filter by college (only when a hackathon is selected)
+    if (selectedHackathon !== 'All' && selectedCollege !== 'All') {
+      filtered = filtered.filter(s => s.college === selectedCollege);
+    }
+    
+    return filtered;
+  }, [students, selectedHackathon, selectedCollege]);
 
   const getTeamRankings = () => {
     const teamMap = new Map();
@@ -73,18 +103,44 @@ const Leaderboard = () => {
         <div className="text-center mb-12">
           <h1 className="text-4xl font-bold text-gray-900 mb-4 text-white">Team Leaderboard</h1>
           <p className="text-lg text-gray-600 text-white">Rankings based on team average scores</p>
-          {/* Hackathon Filter Dropdown */}
-          <div className="mt-6 flex justify-center">
+          {/* Hackathon and College Filter Dropdowns */}
+          <div className="mt-6 flex justify-center gap-4 flex-wrap">
             <select
               value={selectedHackathon}
-              onChange={e => setSelectedHackathon(e.target.value)}
+              onChange={e => {
+                setSelectedHackathon(e.target.value);
+                setSelectedCollege('All'); // Reset college filter when hackathon changes
+              }}
               className="px-4 py-2 rounded-md bg-[#1e293b] text-white border border-gray-600 w-64 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
             >
               <option value="All">All Hackathons</option>
-              <option value={1}>Hackathon-1</option>
-              <option value={2}>Build-for-Telangana</option>
+              {getHackathonOptions().map(option => (
+                <option key={option.value} value={option.value}>
+                  {option.label}
+                </option>
+              ))}
             </select>
+            {selectedHackathon !== 'All' && availableColleges.length > 0 && (
+              <select
+                value={selectedCollege}
+                onChange={e => setSelectedCollege(e.target.value)}
+                className="px-4 py-2 rounded-md bg-[#1e293b] text-white border border-gray-600 w-64 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+              >
+                <option value="All">All Colleges</option>
+                {availableColleges.map(college => (
+                  <option key={college} value={college}>
+                    {college}
+                  </option>
+                ))}
+              </select>
+            )}
           </div>
+          {selectedHackathon !== 'All' && (
+            <p className="text-sm text-gray-400 mt-2">
+              Showing results for: {getHackathonName(Number(selectedHackathon))}
+              {selectedCollege !== 'All' && ` - ${selectedCollege}`}
+            </p>
+          )}
         </div>
 
         {loading ? (

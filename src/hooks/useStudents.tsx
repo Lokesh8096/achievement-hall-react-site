@@ -10,6 +10,7 @@ interface Student {
   team_name: string;
   project_link: string;
   hackathon_count: number;
+  college?: string | null;
   created_at: string;
   updated_at: string;
 }

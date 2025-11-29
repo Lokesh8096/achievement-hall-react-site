@@ -35,6 +35,7 @@ export type Database = {
       }
       students: {
         Row: {
+          college: string | null
           created_at: string
           id: string
           image_url: string | null
@@ -43,8 +44,10 @@ export type Database = {
           score: number
           team_name: string
           updated_at: string
+          hackathon_count: number
         }
         Insert: {
+          college?: string | null
           created_at?: string
           id?: string
           image_url?: string | null
@@ -53,8 +56,10 @@ export type Database = {
           score: number
           team_name: string
           updated_at?: string
+          hackathon_count?: number
         }
         Update: {
+          college?: string | null
           created_at?: string
           id?: string
           image_url?: string | null
@@ -63,6 +68,7 @@ export type Database = {
           score?: number
           team_name?: string
           updated_at?: string
+          hackathon_count?: number
         }
         Relationships: []
       }

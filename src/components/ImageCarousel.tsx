@@ -4,7 +4,7 @@ const images = [
   "https://framerusercontent.com/images/e3UvT1aA2EPeGadEJKZkm9dXY.jpg",
   "https://lh3.googleusercontent.com/p/AF1QipPPKazf2Ib6vOuFWbZfU9HqWVycR39Rz2Ks4dLb=s1360-w1360-h1020-rw",
   "https://lh3.googleusercontent.com/p/AF1QipNtN1V-cxIIcajdTGCk47fF-eCRlLStZhkeLBY3=s1360-w1360-h1020-rw",
-  "https://lh3.googleusercontent.com/gps-cs-s/AC9h4npXO4QuM_EnfycsyYypl_44ntcwSn4lbZ9uXpHx5UvF8FWmqjZs84fy0UcpoYX8tdQSXMwZCaGDcSNpPLR89Lm_8vIkj4Iwrl86q9t0oZoVHvDoS7wwtO95aoxAF0upRYgRYUiyucfvgfrz=s1360-w1360-h1020-rw",
+  "https://bsmedia.business-standard.com/_media/bs/img/article/2025-05/01/full/20250501172418.jpg",
   "https://lh3.googleusercontent.com/p/AF1QipNBuzOQSEzGFNQFA1zizhzSilyGsDZDLhini9P8=s1360-w1360-h1020-rw",
   "https://lh3.googleusercontent.com/p/AF1QipMfb67HeAJ7oA2z-b1iq5RA9XnI9srx7ILabQbV=s1360-w1360-h1020-rw",
 ];

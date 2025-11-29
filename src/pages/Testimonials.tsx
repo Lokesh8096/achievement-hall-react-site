@@ -99,7 +99,7 @@ const Testimonials = () => {
           <div className="max-w-4xl mx-auto">
             <div className="flex items-center justify-center mb-6">
               <Video className="h-12 w-12 text-blue-400 mr-4" />
-              <h1 className="text-5xl md:text-6xl font-bold bg-gradient-to-r from-white to-blue-200 bg-clip-text text-transparent">
+              <h1 className="text-5xl md:text-6xl font-bold bg-gradient-to-r from-white via-blue-300 to-blue-400 bg-clip-text text-transparent">
                 Student Testimonials
               </h1>
             </div>
@@ -136,7 +136,7 @@ const Testimonials = () => {
                 {first.description}
               </p>
             </div>
-            <div className="relative w-full aspect-video overflow-hidden rounded-2xl shadow-2xl border border-gray-700">
+            <div className="relative w-full aspect-video overflow-hidden rounded-2xl shadow-2xl border border-gray-700/50">
               <iframe
                 src={`https://www.youtube.com/embed/${getYoutubeId(first.embedUrl)}?autoplay=1`}
                 title={first.title}
@@ -172,7 +172,7 @@ const Testimonials = () => {
               return (
                 <Card
                   key={testimonial.videoUrl}
-                  className="overflow-hidden bg-[#1e293b] text-white rounded-xl shadow-lg hover:shadow-2xl transition-all duration-300 border border-gray-700 hover:border-blue-500/50 group"
+                  className="overflow-hidden bg-[#1e293b] text-white rounded-xl shadow-lg hover:shadow-2xl transition-all duration-300 border border-gray-700/50 hover:border-blue-500/70 group"
                 >
                   <div className="relative w-full aspect-video cursor-pointer" onClick={() => setPlaying(realIdx)}>
                     {playing === realIdx ? (
@@ -190,12 +190,12 @@ const Testimonials = () => {
                           alt={testimonial.title}
                           className="w-full h-full object-cover rounded-t-xl transition-transform duration-300 group-hover:scale-105"
                         />
-                        <div className="absolute inset-0 flex items-center justify-center bg-black/50 group-hover:bg-black/70 transition-all duration-300 rounded-t-xl">
-                          <div className="bg-blue-600 rounded-full p-4 group-hover:bg-blue-500 transition-all duration-300 group-hover:scale-110">
+                        <div className="absolute inset-0 flex items-center justify-center bg-black/60 group-hover:bg-black/75 transition-all duration-300 rounded-t-xl">
+                          <div className="bg-blue-600 rounded-full p-4 group-hover:bg-blue-500 transition-all duration-300 group-hover:scale-110 shadow-lg">
                             <Play className="h-8 w-8 text-white" fill="white" />
                           </div>
                         </div>
-                        <div className="absolute top-4 right-4 bg-black/70 text-white px-2 py-1 rounded text-sm flex items-center">
+                        <div className="absolute top-4 right-4 bg-black/80 backdrop-blur-sm text-white px-2 py-1 rounded text-sm flex items-center border border-gray-700/50">
                           <Clock className="h-3 w-3 mr-1" />
                           <span>3:45</span>
                         </div>
@@ -208,11 +208,11 @@ const Testimonials = () => {
                     </h3>
                     <p className="text-gray-400 mb-4">{testimonial.description}</p>
                     <div className="flex items-center justify-between">
-                      <div className="flex items-center text-sm text-gray-500">
+                      <div className="flex items-center text-sm text-gray-400">
                         <Eye className="h-4 w-4 mr-1" />
                         <span>1.2K views</span>
                       </div>
-                      <Badge variant="secondary" className="bg-blue-600/20 text-blue-300 border-blue-500/30">
+                      <Badge variant="secondary" className="bg-blue-600/20 text-blue-400 border-blue-500/50">
                         Featured
                       </Badge>
                     </div>
@@ -237,43 +237,43 @@ const Testimonials = () => {
       </section>
 
       {/* Statistics Section */}
-      <section className="bg-gradient-to-br from-[#25637d] to-[#1e4a5f] text-white py-20">
+      <section className="bg-gradient-to-br from-[#1e293b] via-[#0f172a] to-[#1e293b] text-white py-20">
         <div className="container mx-auto px-4">
           <div className="text-center mb-16">
             <h2 className="text-4xl md:text-5xl font-bold mb-6">Our Impact</h2>
-            <p className="text-xl opacity-90 max-w-3xl mx-auto">
+            <p className="text-xl text-gray-300 max-w-3xl mx-auto">
               Numbers that speak for our success and the trust students place in our programs
             </p>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-4 gap-8 text-center">
-            <div className="bg-white/10 backdrop-blur-sm rounded-xl p-8 hover:bg-white/20 transition-all duration-300 hover:scale-105">
-              <div className="text-5xl md:text-6xl font-bold mb-3 text-blue-200">2500+</div>
-              <div className="text-blue-100 text-lg font-medium">Students Trained</div>
+            <div className="bg-[#1e293b]/50 backdrop-blur-sm rounded-xl p-8 hover:bg-[#1e293b]/70 transition-all duration-300 hover:scale-105 border border-gray-700/30">
+              <div className="text-5xl md:text-6xl font-bold mb-3 text-blue-400">2500+</div>
+              <div className="text-gray-300 text-lg font-medium">Students Trained</div>
             </div>
-            <div className="bg-white/10 backdrop-blur-sm rounded-xl p-8 hover:bg-white/20 transition-all duration-300 hover:scale-105">
-              <div className="text-5xl md:text-6xl font-bold mb-3 text-blue-200">95%</div>
-              <div className="text-blue-100 text-lg font-medium">Placement Rate</div>
+            <div className="bg-[#1e293b]/50 backdrop-blur-sm rounded-xl p-8 hover:bg-[#1e293b]/70 transition-all duration-300 hover:scale-105 border border-gray-700/30">
+              <div className="text-5xl md:text-6xl font-bold mb-3 text-blue-400">95%</div>
+              <div className="text-gray-300 text-lg font-medium">Placement Rate</div>
             </div>
-            <div className="bg-white/10 backdrop-blur-sm rounded-xl p-8 hover:bg-white/20 transition-all duration-300 hover:scale-105">
-              <div className="text-5xl md:text-6xl font-bold mb-3 text-blue-200">200+</div>
-              <div className="text-blue-100 text-lg font-medium">Partner Companies</div>
+            <div className="bg-[#1e293b]/50 backdrop-blur-sm rounded-xl p-8 hover:bg-[#1e293b]/70 transition-all duration-300 hover:scale-105 border border-gray-700/30">
+              <div className="text-5xl md:text-6xl font-bold mb-3 text-blue-400">200+</div>
+              <div className="text-gray-300 text-lg font-medium">Partner Companies</div>
             </div>
-            <div className="bg-white/10 backdrop-blur-sm rounded-xl p-8 hover:bg-white/20 transition-all duration-300 hover:scale-105">
-              <div className="text-5xl md:text-6xl font-bold mb-3 text-blue-200">4.8/5</div>
-              <div className="text-blue-100 text-lg font-medium">Average Rating</div>
+            <div className="bg-[#1e293b]/50 backdrop-blur-sm rounded-xl p-8 hover:bg-[#1e293b]/70 transition-all duration-300 hover:scale-105 border border-gray-700/30">
+              <div className="text-5xl md:text-6xl font-bold mb-3 text-blue-400">4.8/5</div>
+              <div className="text-gray-300 text-lg font-medium">Average Rating</div>
             </div>
           </div>
         </div>
       </section>
 
       {/* Call to Action */}
-      <section className="bg-gradient-to-br from-gray-50 to-gray-100 py-20">
+      <section className="bg-gradient-to-br from-[#0f172a] via-[#1e293b] to-[#0f172a] py-20">
         <div className="container mx-auto px-4 text-center">
-          <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6">
+          <h2 className="text-4xl md:text-5xl font-bold text-white mb-6">
             Ready to Start Your Success Story?
           </h2>
-          <p className="text-xl text-gray-600 mb-10 max-w-3xl mx-auto leading-relaxed">
+          <p className="text-xl text-gray-300 mb-10 max-w-3xl mx-auto leading-relaxed">
             Join thousands of students who have transformed their careers with our
             comprehensive programs. Take the first step towards your dream career today.
           </p>
@@ -289,7 +289,7 @@ const Testimonials = () => {
             </button>
 
             <button
-              className="bg-white hover:bg-gray-50 text-blue-600 border-2 border-blue-600 hover:border-blue-700 px-10 py-4 rounded-lg font-semibold shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300 min-w-[160px] text-lg"
+              className="bg-[#1e293b] hover:bg-[#1e293b]/80 text-blue-400 border-2 border-blue-500 hover:border-blue-400 px-10 py-4 rounded-lg font-semibold shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300 min-w-[160px] text-lg"
               onClick={() => {
                 const targetUrl = "https://www.niatindia.com/";
                 window.open(targetUrl, "_blank");

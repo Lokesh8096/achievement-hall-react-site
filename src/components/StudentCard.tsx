@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom";
 import { ExternalLink } from "lucide-react";
+import { getHackathonName } from "@/lib/hackathons";
 
 interface Student {
   id: string;
@@ -9,6 +10,7 @@ interface Student {
   team_name: string;
   project_link: string;
   hackathon_count: number;
+  college?: string | null;
 }
 
 interface StudentCardProps {
@@ -59,11 +61,16 @@ const StudentCard = ({ student }: StudentCardProps) => {
             <ExternalLink className="h-4 w-4 text-gray-400 transition-colors duration-300 group-hover:text-red-600" />
           </div>
 
-          {/* Hackathon Count */}
-          <div className="flex items-center space-x-2">
+          {/* Hackathon and College */}
+          <div className="flex flex-col space-y-1">
             <span className="text-sm text-brown-400">
-              {student.hackathon_count === 2 ? 'Build-for-Telangana' : `Hackathon-${student.hackathon_count}`}
+              {getHackathonName(student.hackathon_count)}
             </span>
+            {student.college && (
+              <span className="text-xs text-gray-500">
+                {student.college}
+              </span>
+            )}
           </div>
         </div>
       </div>
